@@ -1,0 +1,17 @@
+{
+  "name": "StatTracker",
+  "version": "1.0.0",
+  "description": "Tracks voice connectivity statistics of a discord guild.",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Adidude",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^11.5.1",
+    "eslint": "^6.1.0"
+  },
+  "devDependencies": {}
+}
