@@ -2,7 +2,6 @@
 */
 const Discord = require('discord.js');
 const fs = require('fs');
-const { token } = require('./auth.json');
 const client = new Discord.Client();
 
 // Will collect data
@@ -13,7 +12,7 @@ function collectData(connection) {
 	while (!isWritten) {
 		try {
 			// Adds data to file.
-			fs.appendFile('Connections.dat', connection.date + ',' + connection.time + ',' + connection.id + ',' + connection.isConnected + ',' + connection.tag + '\n', (e) =>{
+			fs.appendFile('Connections.dat', connection.date + ',' + connection.time + ',' + connection.id + ',' + connection.isConnected + ',' + connection.tag + ',' + connection.isMuted + ',' + connection.isDeaf + '\n', (e) =>{
 				if (e) {throw e;}
 			});
 			isWritten = true;
@@ -43,21 +42,20 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 	const today = date.getDate() + '-' + month + '-' + date.getFullYear();
 	const now = date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
 
-	// If a user joins
-	if (typeof oldMember.voiceChannel === 'undefined' && newMember.selfMute === false && newMember.selfDeaf === false && newMember.serverMute === false && newMember.serverDeaf === false) {
+	// If a user joins or changes mute/deafened state.
+	if ((typeof oldMember.voiceChannel === 'undefined' && newMember.voiceChannel != null) || oldMember.mute != newMember.mute || oldMember.deaf != newMember.deaf) {
 		// Create voiceConnection object which stores connection details.
-		const voiceConnection = { date:today, time:now, tag:newMember.user.tag, id:newMember.id, isConnected:true };
+		const voiceConnection = { date:today, time:now, tag:newMember.user.tag, id:newMember.id, isConnected:true, isMuted:newMember.mute, isDeaf:newMember.deaf };
 		// Collect the data.
 		collectData(voiceConnection);
-	}
+	} // If user leaves.
 	else if (typeof newMember.voiceChannel === 'undefined') {
-		// If user leaves.
 		// Create voiceConnection object which stores connection details.
-		const voiceConnection = { date:today, time:now, tag:newMember.user.tag, id:newMember.id, isConnected:false };
+		const voiceConnection = { date:today, time:now, tag:newMember.user.tag, id:newMember.id, isConnected:false, isMuted:newMember.mute, isDeaf:newMember.deaf };
 		// Collect the data.
 		collectData(voiceConnection);
+		console.log(voiceConnection);
 	}
 });
 
-
-client.login(token);
+client.login(Process.env.token);
