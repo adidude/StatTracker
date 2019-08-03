@@ -58,4 +58,4 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 	}
 });
 
-client.login(Process.env.token);
+client.login(process.env.token);
