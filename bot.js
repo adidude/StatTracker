@@ -1,26 +1,25 @@
 /** Import discord.js API library and login token.
 */
 const Discord = require('discord.js');
-const fs = require('fs');
+const { pg } = require('pg');
 const client = new Discord.Client();
+
+// Use Heroku Postgres database
+const database = new pg({
+	connectionString: process.env.DATABASE_URL,
+	ssl: true,
+});
+
+// Will connect to the database.
+database.connect();
 
 // Will collect data
 function collectData(connection) {
-	// Write data to file
-	let isWritten = false;
-	// Loop as long as data is not written
-	while (!isWritten) {
-		try {
-			// Adds data to file.
-			fs.appendFile('Connections.dat', connection.date + ',' + connection.time + ',' + connection.id + ',' + connection.isConnected + ',' + connection.tag + ',' + connection.isMuted + ',' + connection.isDeaf + '\n', (e) =>{
-				if (e) {throw e;}
-			});
-			isWritten = true;
-		}
-		catch (e) {
-			console.log('Write failed. Retrying writing to  file.');
-		}
-	}
+	// TODO: Specify in SQL that DMY mode is used for DateStyle parameter.
+	// Adds data to file. This is PostgreSQL. New entries are added to the table voiceStateChanges.
+	database.query('INSERT INTO voiceStateChanges(date, time, tag, id, isConnected, isMuted, isDeaf) VALUES ($1,$2,$3,$4,$5,$6,$7)', connection);
+	// The Columns in the table are in the order:
+	// | Date | Time | Tag | ID | isConnected | isMuted | isDeaf |
 }
 
 // Inform us when connected to server.
@@ -45,17 +44,25 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 	// If a user joins or changes mute/deafened state.
 	if ((typeof oldMember.voiceChannel === 'undefined' && newMember.voiceChannel != null) || oldMember.mute != newMember.mute || oldMember.deaf != newMember.deaf) {
 		// Create voiceConnection object which stores connection details.
-		const voiceConnection = { date:today, time:now, tag:newMember.user.tag, id:newMember.id, isConnected:true, isMuted:newMember.mute, isDeaf:newMember.deaf };
+		// The Columns in the table are in the order:
+		// | Date | Time | Tag | ID | isConnected | isMuted | isDeaf |
+		const voiceConnection = [ today, now, newMember.user.tag, newMember.id, true, newMember.mute, newMember.deaf ];
 		// Collect the data.
 		collectData(voiceConnection);
 	} // If user leaves.
 	else if (typeof newMember.voiceChannel === 'undefined') {
 		// Create voiceConnection object which stores connection details.
-		const voiceConnection = { date:today, time:now, tag:newMember.user.tag, id:newMember.id, isConnected:false, isMuted:newMember.mute, isDeaf:newMember.deaf };
+		// The Columns in the table are in the order:
+		// | Date | Time | Tag | ID | isConnected | isMuted | isDeaf |
+		const voiceConnection = [ today, now, newMember.user.tag, newMember.id, false, newMember.mute, newMember.deaf ];
 		// Collect the data.
 		collectData(voiceConnection);
-		console.log(voiceConnection);
 	}
 });
+
+// TODO: Figure out what needs to be done on closing/crash event.
+/* client.on('disconnect', CloseEvent => {
+
+});*/
 
 client.login(Process.env.token);
