@@ -1,11 +1,11 @@
 /** Import discord.js API library and login token.
 */
 const Discord = require('discord.js');
-const { pg } = require('pg');
+const { Pool } = require('pg');
 const client = new Discord.Client();
 
 // Use Heroku Postgres database
-const database = new pg({
+const database = new Pool({
 	connectionString: process.env.DATABASE_URL,
 	ssl: true,
 });
