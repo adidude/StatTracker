@@ -37,16 +37,21 @@ client.once('ready', () => {
 client.on('voiceStateUpdate', (oldMember, newMember) => {
 	// EXPERIMENTAL START
 	// If the user is not a bot.
-	if (!client.user.bot) {
-		console.log('client.user.bot: ' + client.user.bot);
-		console.log('The user is not a bot.');
+	try {
+		if (!client.user.bot) {
+			console.log('client.user.bot: ' + client.user.bot);
+			console.log('The user is not a bot.');
+		}
+		else if (client.user.bot) {
+			console.log('client.user.bot: ' + client.user.bot);
+			console.log('The user is a bot.');
+		}
+		else {
+			console.log('We could not understand anything.');
+		}
 	}
-	else if (client.user.bot) {
-		console.log('client.user.bot: ' + client.user.bot);
-		console.log('The user is a bot.');
-	}
-	else {
-		console.log('We could not understand anything.');
+	catch (e) {
+		console.log('I did an oopsie');
 	}
 	// EXPERIMENTAL STOP
 
