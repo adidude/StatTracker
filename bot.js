@@ -37,22 +37,17 @@ client.once('ready', () => {
 client.on('voiceStateUpdate', (oldMember, newMember) => {
 	// EXPERIMENTAL START
 	// If the user is not a bot.
-	/*try {
-		if (!client.user.bot) {
-			console.log('client.user.bot: ' + client.user.bot);
-			console.log('The user is not a bot.');
-		}
-		else if (client.user.bot) {
-			console.log('client.user.bot: ' + client.user.bot);
-			console.log('The user is a bot.');
-		}
-		else {
-			console.log('We could not understand anything.');
-		}
+	if (!client.user.bot) {
+		console.log('client.user.bot: ' + client.user.bot);
+		console.log('The user is not a bot.');
 	}
-	catch (e) {
-		console.log('I did an oopsie');
-	}*/
+	else if (client.user.bot) {
+		console.log('client.user.bot: ' + client.user.bot);
+		console.log('The user is a bot.');
+	}
+	else {
+		console.log('We could not understand anything.');
+	}
 	// EXPERIMENTAL STOP
 
 	// Collect date/time information in UTC.
