@@ -35,6 +35,21 @@ client.once('ready', () => {
 
 // When a user leaves/joins a voice channel
 client.on('voiceStateUpdate', (oldMember, newMember) => {
+	// EXPERIMENTAL START
+	// If the user is not a bot.
+	if (!client.user.bot) {
+		console.log('client.user.bot: ' + client.user.bot);
+		console.log('The user is not a bot.');
+	}
+	else if (client.user.bot) {
+		console.log('client.user.bot: ' + client.user.bot);
+		console.log('The user is a bot.');
+	}
+	else {
+		console.log('We could not understand anything.');
+	}
+	// EXPERIMENTAL STOP
+
 	// Collect date/time information in UTC.
 	const date = new Date();
 	const month = date.getUTCMonth() + 1;
