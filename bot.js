@@ -37,7 +37,7 @@ client.once('ready', () => {
 client.on('voiceStateUpdate', (oldMember, newMember) => {
 	// EXPERIMENTAL START
 	// If the user is not a bot.
-	try {
+	/*try {
 		if (!client.user.bot) {
 			console.log('client.user.bot: ' + client.user.bot);
 			console.log('The user is not a bot.');
@@ -52,7 +52,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 	}
 	catch (e) {
 		console.log('I did an oopsie');
-	}
+	}*/
 	// EXPERIMENTAL STOP
 
 	// Collect date/time information in UTC.
