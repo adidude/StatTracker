@@ -33,44 +33,35 @@ client.once('ready', () => {
 });*/
 
 
+// TODO: Take note when a user enters and leaves the AFK channel.
+// TODO: Fix issue where when user recieves a call and accepts the database fails to store data.
+
 // When a user leaves/joins a voice channel
 client.on('voiceStateUpdate', (oldMember, newMember) => {
-	// EXPERIMENTAL START
-	// If the user is not a bot.
-	if (!client.user.bot) {
-		console.log('client.user.bot: ' + client.user.bot);
-		console.log('The user is not a bot.');
-	}
-	else if (client.user.bot) {
-		console.log('client.user.bot: ' + client.user.bot);
-		console.log('The user is a bot.');
-	}
-	else {
-		console.log('We could not understand anything.');
-	}
-	// EXPERIMENTAL STOP
+	// If the user is not a bot carry out tasks, else do nothing.
+	if (!oldMember.user.bot && !newMember.user.bot) {
+		// Collect date/time information in UTC.
+		const date = new Date();
+		const month = date.getUTCMonth() + 1;
+		const timestamp = date.getUTCDate() + '-' + month + '-' + date.getUTCFullYear() + ' ' + date.getUTCHours() + ':' + date.getUTCMinutes() + ':' + date.getUTCSeconds() + ' UTC';
 
-	// Collect date/time information in UTC.
-	const date = new Date();
-	const month = date.getUTCMonth() + 1;
-	const timestamp = date.getUTCDate() + '-' + month + '-' + date.getUTCFullYear() + ' ' + date.getUTCHours() + ':' + date.getUTCMinutes() + ':' + date.getUTCSeconds() + ' UTC';
-
-	// If a user joins or changes mute/deafened state.
-	if ((typeof oldMember.voiceChannel === 'undefined' && newMember.voiceChannel != null) || oldMember.mute != newMember.mute || oldMember.deaf != newMember.deaf) {
-		// Create voiceConnection object which stores connection details.
-		// The Columns in the table are in the order:
-		// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf |
-		const voiceConnection = [ timestamp, newMember.user.tag, newMember.id, true, newMember.mute, newMember.deaf ];
-		// Collect the data.
-		collectData(voiceConnection);
-	} // If user leaves.
-	else if (typeof newMember.voiceChannel === 'undefined') {
-		// Create voiceConnection object which stores connection details.
-		// The Columns in the table are in the order:
-		// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf |
-		const voiceConnection = [ timestamp, newMember.user.tag, newMember.id, false, newMember.mute, newMember.deaf ];
-		// Collect the data.
-		collectData(voiceConnection);
+		// If a user joins or changes mute/deafened state.
+		if ((typeof oldMember.voiceChannel === 'undefined' && newMember.voiceChannel != null) || oldMember.mute != newMember.mute || oldMember.deaf != newMember.deaf) {
+			// Create voiceConnection object which stores connection details.
+			// The Columns in the table are in the order:
+			// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf |
+			const voiceConnection = [ timestamp, newMember.user.tag, newMember.id, true, newMember.mute, newMember.deaf ];
+			// Collect the data.
+			collectData(voiceConnection);
+		} // If user leaves.
+		else if (typeof newMember.voiceChannel === 'undefined') {
+			// Create voiceConnection object which stores connection details.
+			// The Columns in the table are in the order:
+			// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf |
+			const voiceConnection = [ timestamp, newMember.user.tag, newMember.id, false, newMember.mute, newMember.deaf ];
+			// Collect the data.
+			collectData(voiceConnection);
+		}
 	}
 });
 
