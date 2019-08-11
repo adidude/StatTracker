@@ -65,6 +65,13 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 	}
 });
 
+// WIP START
+// Will know when a user enters/exits the AFK channel.
+client.on('guildMemberUpdate', (oldMember, newMember) => {
+	console.log(oldMember.nickname + ' joined the ' + newMember.voiceChannel + ' channel with chanel id: ' + newMember.voiceChannelID + '\n Session id: ' + newMember.voiceSessionID);
+});
+// WIP END
+
 // TODO: Figure out what needs to be done on closing/crash event.
 /* client.on('disconnect', CloseEvent => {
 
