@@ -17,7 +17,7 @@ database.connect();
 function collectData(connection) {
 	// TODO: Specify in SQL that DMY mode is used for DateStyle parameter.
 	// Adds data to file. This is PostgreSQL. New entries are added to the table voiceStateChanges.
-	database.query('INSERT INTO voiceStateConnections(timestamp, tag, id, isConnected, isMuted, isDeaf) VALUES ($1,$2,$3,$4,$5,$6)', connection);
+	database.query('INSERT INTO voiceStateConnections(timestamp, tag, id, isConnected, isMuted, isDeaf) VALUES (NOW(),$1,$2,$3,$4,$5)', connection);
 	// The Columns in the table are in the order:
 	// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf |
 }
@@ -38,19 +38,21 @@ client.once('ready', () => {
 
 // When a user leaves/joins a voice channel
 client.on('voiceStateUpdate', (oldMember, newMember) => {
+	console.log(oldMember.nickname + ' joined the ' + newMember.voiceChannel + ' channel with chanel id: ' + newMember.voiceChannelID + '\n Session id: ' + newMember.voiceSessionID);
 	// If the user is not a bot carry out tasks, else do nothing.
 	if (!oldMember.user.bot && !newMember.user.bot) {
 		// Collect date/time information in UTC.
-		const date = new Date();
-		const month = date.getUTCMonth() + 1;
-		const timestamp = date.getUTCDate() + '-' + month + '-' + date.getUTCFullYear() + ' ' + date.getUTCHours() + ':' + date.getUTCMinutes() + ':' + date.getUTCSeconds() + ' UTC';
+		// const date = new Date();
+		// const month = date.getUTCMonth() + 1;
+		// const timestamp = date.getUTCDate() + '-' + month + '-' + date.getUTCFullYear() + ' ' + date.getUTCHours() + ':' + date.getUTCMinutes() + ':' + date.getUTCSeconds() + ' UTC';
 
 		// If a user joins or changes mute/deafened state.
 		if ((typeof oldMember.voiceChannel === 'undefined' && newMember.voiceChannel != null) || oldMember.mute != newMember.mute || oldMember.deaf != newMember.deaf) {
 			// Create voiceConnection object which stores connection details.
 			// The Columns in the table are in the order:
 			// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf |
-			const voiceConnection = [ timestamp, newMember.user.tag, newMember.id, true, newMember.mute, newMember.deaf ];
+			// const voiceConnection = [ timestamp, newMember.user.tag, newMember.id, true, newMember.mute, newMember.deaf ];
+			const voiceConnection = [ newMember.user.tag, newMember.id, true, newMember.mute, newMember.deaf ];
 			// Collect the data.
 			collectData(voiceConnection);
 		} // If user leaves.
@@ -58,19 +60,19 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 			// Create voiceConnection object which stores connection details.
 			// The Columns in the table are in the order:
 			// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf |
-			const voiceConnection = [ timestamp, newMember.user.tag, newMember.id, false, newMember.mute, newMember.deaf ];
+			// const voiceConnection = [ timestamp, newMember.user.tag, newMember.id, true, newMember.mute, newMember.deaf ];
+			const voiceConnection = [ newMember.user.tag, newMember.id, false, newMember.mute, newMember.deaf ];
 			// Collect the data.
 			collectData(voiceConnection);
 		}
 	}
 });
 
-// WIP START
-// Will know when a user enters/exits the AFK channel.
-client.on('guildMemberUpdate', (oldMember, newMember) => {
-	console.log(oldMember.nickname + ' joined the ' + newMember.voiceChannel + ' channel with chanel id: ' + newMember.voiceChannelID + '\n Session id: ' + newMember.voiceSessionID);
-});
-// WIP END
+// TODO: Make following section functional.
+// Will know when a user changes username and will update all entries with new username.
+/* client.on('guildMemberUpdate', (oldMember, newMember) => {
+
+});*/
 
 // TODO: Figure out what needs to be done on closing/crash event.
 /* client.on('disconnect', CloseEvent => {
