@@ -38,7 +38,8 @@ client.once('ready', () => {
 
 // When a user leaves/joins a voice channel
 client.on('voiceStateUpdate', (oldMember, newMember) => {
-	console.log(oldMember.nickname + ' joined the ' + newMember.voiceChannel + ' channel with chanel id: ' + newMember.voiceChannelID + '\n Session id: ' + newMember.voiceSessionID);
+	// NOTE: next line holds valuable information on how to know when a user becomes afk. 
+	// console.log(oldMember.user.tag + ' joined the ' + newMember.voiceChannel + ' channel with chanel id: ' + newMember.voiceChannelID + '\n Session id: ' + newMember.voiceSessionID);
 	// If the user is not a bot carry out tasks, else do nothing.
 	if (!oldMember.user.bot && !newMember.user.bot) {
 		// Collect date/time information in UTC.
