@@ -20,8 +20,17 @@ const obs = new PerformanceObserver((items) => {
 });
 obs.observe({ entryTypes: ['measure'] });
 
-// Will connect to the database.
-database.connect();
+let isDatabaseConnected = false;
+while (!isDatabaseConnected) {
+	try {
+		// Will connect to the database.
+		database.connect();
+		isDatabaseConnected = true;
+	}
+	catch (e) {
+		isDatabaseConnected = false;
+	}
+}
 
 // Will collect data
 function collectData(connection) {
