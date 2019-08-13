@@ -31,8 +31,7 @@ function collectData(connection) {
 	database.query('INSERT INTO voiceStateConnections(timestamp, tag, id, isConnected, isMuted, isDeaf) VALUES (NOW(),$1,$2,$3,$4,$5)', connection);
 	performance.mark('B');
 	performance.measure('A to B', 'A', 'B');
-	const measure = performance.getEntriesByName('A to B'[0]);
-	console.log('Interval: ' + measure.duration);
+	//console.log('Interval: ' + measure.duration);
 	// The Columns in the table are in the order:
 	// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf | isAFK |
 }
