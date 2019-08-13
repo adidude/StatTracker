@@ -3,7 +3,7 @@
 const Discord = require('discord.js');
 const { Pool } = require('pg');
 // TEMPORARY
-const performance = require('perf_hooks');
+const { PerformanceObserver, performance } = require('perf_hooks');
 // TEMPORARY
 const client = new Discord.Client();
 
@@ -13,6 +13,13 @@ const database = new Pool({
 	ssl: true,
 });
 
+// Timer?
+const obs = new PerformanceObserver((items) => {
+	console.log(items.getEntries()[0].duration);
+	performance.clearMarks();
+});
+obs.observe({ entryTypes: ['measure'] });
+
 // Will connect to the database.
 database.connect();
 
@@ -20,11 +27,12 @@ database.connect();
 function collectData(connection) {
 	// TODO: Specify in SQL that DMY mode is used for DateStyle parameter.
 	// Adds data to file. This is PostgreSQL. New entries are added to the table voiceStateChanges.
-	performance.mark('');
+	performance.mark('A');
 	database.query('INSERT INTO voiceStateConnections(timestamp, tag, id, isConnected, isMuted, isDeaf) VALUES (NOW(),$1,$2,$3,$4,$5)', connection);
-	performance.mark('');
-	const mark = performance.getEntriesByType('mark');
-	console.log('Interval: ${marks[1].startTime - marks[0].startTime}');
+	performance.mark('B');
+	performance.measure('A to B', 'A', 'B');
+	const measure = performance.getEntriesByName('A to B'[0]);
+	console.log('Interval: ' + measure.duration);
 	// The Columns in the table are in the order:
 	// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf | isAFK |
 }
@@ -39,8 +47,6 @@ client.once('ready', () => {
 	message.reply('Yes I hear you.');
 });*/
 
-
-// TODO: Take note when a user enters and leaves the AFK channel.
 // TODO: Fix issue where when user recieves a call and accepts the database fails to store data.
 // TODO: Measure the faster method of collecting the timestamp.
 
