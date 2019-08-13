@@ -17,12 +17,10 @@ database.connect();
 function collectData(connection) {
 	// TODO: Specify in SQL that DMY mode is used for DateStyle parameter.
 	// Adds data to file. This is PostgreSQL. New entries are added to the table voiceStateChanges.
-	const timer = new Date();
-	const begun = timer.now();
+	const begun = Date.now();
 	database.query('INSERT INTO voiceStateConnections(timestamp, tag, id, isConnected, isMuted, isDeaf) VALUES (NOW(),$1,$2,$3,$4,$5)', connection);
-	const end = timer.now();
-	const interval = end - begun;
-	console.log('Collected at ' + begun + '\n Ended at: ' + end + '\n Interval: ' + interval);
+	const interval = Date.now() - begun;
+	console.log('Collected at ' + begun + '\n Interval: ' + interval);
 	// The Columns in the table are in the order:
 	// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf |
 }
