@@ -3,7 +3,7 @@
 const Discord = require('discord.js');
 const { Pool } = require('pg');
 // TEMPORARY
-const { PerformanceObserver, performance } = require('perf_hooks');
+// const { PerformanceObserver, performance } = require('perf_hooks');
 // TEMPORARY
 const client = new Discord.Client();
 
@@ -16,14 +16,15 @@ const database = new Pool({
 // Will connect to the database.
 database.connect();
 
-// Timer?
+// Timer
+/*
 let measurements = 1;
 const obs = new PerformanceObserver((items) => {
 	console.log(measurements + ') ' + items.getEntries()[0].duration);
 	performance.clearMarks();
 	measurements++;
 });
-obs.observe({ entryTypes: ['measure'] });
+obs.observe({ entryTypes: ['measure'] }); */
 // performance.mark('A');
 // performance.mark('B');
 // performance.measure('A to B', 'A', 'B');
@@ -31,17 +32,12 @@ obs.observe({ entryTypes: ['measure'] });
 
 // Will collect data
 function collectData(connection) {
-	// TODO: Specify in SQL that DMY mode is used for DateStyle parameter.
 	// Adds data to file. This is PostgreSQL. New entries are added to the table voiceStateChanges.
-	// database.query('INSERT INTO voiceStateConnections(timestamp, tag, id, isConnected, isMuted, isDeaf, isAFK) VALUES (NOW(),$1,$2,$3,$4,$5,$6)', connection, (err) => {
-	database.query('INSERT INTO voiceStateConnections(timestamp, tag, id, isConnected, isMuted, isDeaf, isAFK) VALUES ($1,$2,$3,$4,$5,$6,$7)', connection, (err) => {
+	database.query('INSERT INTO voiceStateConnections(timestamp, tag, id, isConnected, isMuted, isDeaf, isAFK) VALUES (NOW(),$1,$2,$3,$4,$5,$6)', connection, (err) => {
 		if (err) {
 			return console.error('Error executing query', err.stack);
 		}
-		performance.mark('B');
-		performance.measure('A to B', 'A', 'B');
 	});
-
 	// The Columns in the table are in the order:
 	// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf | isAFK |
 }
@@ -57,22 +53,16 @@ client.once('ready', () => {
 });*/
 
 // TODO: Fix issue where when user recieves a call and accepts the database fails to store data.
-// TODO: Measure the faster method of collecting the timestamp.
 
 // When a user leaves/joins a voice channel
 client.on('voiceStateUpdate', (oldMember, newMember) => {
 	// If the user is not a bot carry out tasks, else do nothing.
 	if (!oldMember.user.bot && !newMember.user.bot) {
-		// Collect date/time information in UTC.
-		performance.mark('A');
-		const date = new Date();
-		const month = date.getUTCMonth() + 1;
-		const timestamp = date.getUTCFullYear() + '-' + month + '-' + date.getUTCDate() + ' ' + date.getUTCHours() + ':' + date.getUTCMinutes() + ':' + date.getUTCSeconds() + '+00';
-
 		// If the user is in tha AFK channel.
+		console.log(newMember.voiceSessionID);
 		if (newMember.voiceSessionID == 405374555847262219) {
 			// Create voiceConnection object which stores connection details.
-			const voiceConnection = [ timestamp, newMember.user.tag, newMember.id, true, newMember.mute, newMember.deaf, true ];
+			const voiceConnection = [ newMember.user.tag, newMember.id, true, newMember.mute, newMember.deaf, true ];
 			// The Columns in the table are in the order:
 			// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf | isAFK |
 
@@ -81,7 +71,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 		} // If a user joins or changes mute/deafened state.
 		else if ((typeof oldMember.voiceChannel === 'undefined' && newMember.voiceChannel != null) || oldMember.mute != newMember.mute || oldMember.deaf != newMember.deaf) {
 			// Create voiceConnection object which stores connection details.
-			const voiceConnection = [ timestamp, newMember.user.tag, newMember.id, true, newMember.mute, newMember.deaf, newMember.deaf ];
+			const voiceConnection = [ newMember.user.tag, newMember.id, true, newMember.mute, newMember.deaf, newMember.deaf ];
 			// The Columns in the table are in the order:
 			// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf | isAFK |
 
@@ -93,7 +83,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 			// The Columns in the table are in the order:
 			// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf | isAFK |
 			// const voiceConnection = [ timestamp, newMember.user.tag, newMember.id, true, newMember.mute, newMember.deaf ];
-			const voiceConnection = [ timestamp, newMember.user.tag, newMember.id, false, newMember.mute, newMember.deaf ];
+			const voiceConnection = [ newMember.user.tag, newMember.id, false, newMember.mute, newMember.deaf ];
 			// Collect the data.
 			collectData(voiceConnection);
 		}
