@@ -17,25 +17,31 @@ const database = new Pool({
 database.connect();
 
 // Timer?
+let measurements = 1;
 const obs = new PerformanceObserver((items) => {
-	console.log(items.getEntries()[0].duration);
+	console.log(measurements + ') ' + items.getEntries()[0].duration);
 	performance.clearMarks();
+	measurements++;
 });
 obs.observe({ entryTypes: ['measure'] });
+// performance.mark('A');
+// performance.mark('B');
+// performance.measure('A to B', 'A', 'B');
 // Timer End
 
 // Will collect data
 function collectData(connection) {
 	// TODO: Specify in SQL that DMY mode is used for DateStyle parameter.
 	// Adds data to file. This is PostgreSQL. New entries are added to the table voiceStateChanges.
-	performance.mark('A');
-	database.query('INSERT INTO voiceStateConnections(timestamp, tag, id, isConnected, isMuted, isDeaf, isAFK) VALUES (NOW(),$1,$2,$3,$4,$5,$6)', connection, (err) => {
+	// database.query('INSERT INTO voiceStateConnections(timestamp, tag, id, isConnected, isMuted, isDeaf, isAFK) VALUES (NOW(),$1,$2,$3,$4,$5,$6)', connection, (err) => {
+	database.query('INSERT INTO voiceStateConnections(timestamp, tag, id, isConnected, isMuted, isDeaf, isAFK) VALUES ($1,$2,$3,$4,$5,$6,$7)', connection, (err) => {
 		if (err) {
 			return console.error('Error executing query', err.stack);
 		}
+		performance.mark('B');
+		performance.measure('A to B', 'A', 'B');
 	});
-	performance.mark('B');
-	performance.measure('A to B', 'A', 'B');
+
 	// The Columns in the table are in the order:
 	// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf | isAFK |
 }
@@ -58,14 +64,15 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 	// If the user is not a bot carry out tasks, else do nothing.
 	if (!oldMember.user.bot && !newMember.user.bot) {
 		// Collect date/time information in UTC.
-		// const date = new Date();
-		// const month = date.getUTCMonth() + 1;
-		// const timestamp = date.getUTCDate() + '-' + month + '-' + date.getUTCFullYear() + ' ' + date.getUTCHours() + ':' + date.getUTCMinutes() + ':' + date.getUTCSeconds() + ' UTC';
+		performance.mark('A');
+		const date = new Date();
+		const month = date.getUTCMonth() + 1;
+		const timestamp = date.getUTCDate() + '-' + month + '-' + date.getUTCFullYear() + ' ' + date.getUTCHours() + ':' + date.getUTCMinutes() + ':' + date.getUTCSeconds() + ' UTC';
 
 		// If the user is in tha AFK channel.
 		if (newMember.voiceSessionID == 405374555847262219) {
 			// Create voiceConnection object which stores connection details.
-			const voiceConnection = [ newMember.user.tag, newMember.id, true, newMember.mute, newMember.deaf, true ];
+			const voiceConnection = [ timestamp, newMember.user.tag, newMember.id, true, newMember.mute, newMember.deaf, true ];
 			// The Columns in the table are in the order:
 			// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf | isAFK |
 
@@ -74,7 +81,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 		} // If a user joins or changes mute/deafened state.
 		else if ((typeof oldMember.voiceChannel === 'undefined' && newMember.voiceChannel != null) || oldMember.mute != newMember.mute || oldMember.deaf != newMember.deaf) {
 			// Create voiceConnection object which stores connection details.
-			const voiceConnection = [ newMember.user.tag, newMember.id, true, newMember.mute, newMember.deaf, newMember.deaf ];
+			const voiceConnection = [ timestamp, newMember.user.tag, newMember.id, true, newMember.mute, newMember.deaf, newMember.deaf ];
 			// The Columns in the table are in the order:
 			// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf | isAFK |
 
@@ -86,7 +93,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 			// The Columns in the table are in the order:
 			// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf | isAFK |
 			// const voiceConnection = [ timestamp, newMember.user.tag, newMember.id, true, newMember.mute, newMember.deaf ];
-			const voiceConnection = [ newMember.user.tag, newMember.id, false, newMember.mute, newMember.deaf ];
+			const voiceConnection = [ timestamp, newMember.user.tag, newMember.id, false, newMember.mute, newMember.deaf ];
 			// Collect the data.
 			collectData(voiceConnection);
 		}
