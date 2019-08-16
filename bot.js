@@ -29,7 +29,7 @@ function collectData(connection) {
 	// TODO: Specify in SQL that DMY mode is used for DateStyle parameter.
 	// Adds data to file. This is PostgreSQL. New entries are added to the table voiceStateChanges.
 	performance.mark('A');
-	await database.query('INSERT INTO voiceStateConnections(timestamp, tag, id, isConnected, isMuted, isDeaf) VALUES (NOW(),$1,$2,$3,$4,$5)', connection);
+	database.query('INSERT INTO voiceStateConnections(timestamp, tag, id, isConnected, isMuted, isDeaf) VALUES (NOW(),$1,$2,$3,$4,$5)', connection);
 	performance.mark('B');
 	performance.measure('A to B', 'A', 'B');
 	//console.log('Interval: ' + measure.duration);
