@@ -13,31 +13,23 @@ const database = new Pool({
 	ssl: true,
 });
 
+// Will connect to the database.
+await database.connect();
+
 // Timer?
 const obs = new PerformanceObserver((items) => {
 	console.log(items.getEntries()[0].duration);
 	performance.clearMarks();
 });
 obs.observe({ entryTypes: ['measure'] });
-
-let isDatabaseConnected = false;
-while (!isDatabaseConnected) {
-	try {
-		// Will connect to the database.
-		database.connect();
-		isDatabaseConnected = true;
-	}
-	catch (e) {
-		isDatabaseConnected = false;
-	}
-}
+// Timer End
 
 // Will collect data
 function collectData(connection) {
 	// TODO: Specify in SQL that DMY mode is used for DateStyle parameter.
 	// Adds data to file. This is PostgreSQL. New entries are added to the table voiceStateChanges.
 	performance.mark('A');
-	database.query('INSERT INTO voiceStateConnections(timestamp, tag, id, isConnected, isMuted, isDeaf) VALUES (NOW(),$1,$2,$3,$4,$5)', connection);
+	await database.query('INSERT INTO voiceStateConnections(timestamp, tag, id, isConnected, isMuted, isDeaf) VALUES (NOW(),$1,$2,$3,$4,$5)', connection);
 	performance.mark('B');
 	performance.measure('A to B', 'A', 'B');
 	//console.log('Interval: ' + measure.duration);
