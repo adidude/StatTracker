@@ -59,7 +59,6 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 	// If the user is not a bot carry out tasks, else do nothing.
 	if (!oldMember.user.bot && !newMember.user.bot) {
 		// If the user is in tha AFK channel.
-		console.log(newMember.voiceChannelID);
 		if (newMember.voiceChannelID == 405374555847262219) {
 			// Create voiceConnection object which stores connection details.
 			const voiceConnection = [ newMember.user.tag, newMember.id, true, newMember.mute, newMember.deaf, true ];
@@ -82,10 +81,15 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 			// Create voiceConnection object which stores connection details.
 			// The Columns in the table are in the order:
 			// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf | isAFK |
-			// const voiceConnection = [ timestamp, newMember.user.tag, newMember.id, true, newMember.mute, newMember.deaf ];
-			const voiceConnection = [ newMember.user.tag, newMember.id, false, newMember.mute, newMember.deaf ];
+			const voiceConnection = [ newMember.user.tag, newMember.id, false, newMember.mute, newMember.deaf, false ];
 			// Collect the data.
 			collectData(voiceConnection);
+		} // If user leaves the AFK channel.
+		else if (oldMember.voiceChannelID == 405374555847262219 && typeof newMember.voiceChannel != 'undefined') {
+			// Create voiceConnection object which stores connection details.
+			// The Columns in the table are in the order:
+			// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf | isAFK |
+			const voiceConnection = [ newMember.user.tag, newMember.id, false, newMember.mute, newMember.deaf, newMember.deaf ];
 		}
 	}
 });
