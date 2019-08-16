@@ -90,6 +90,8 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 			// The Columns in the table are in the order:
 			// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf | isAFK |
 			const voiceConnection = [ newMember.user.tag, newMember.id, false, newMember.mute, newMember.deaf, newMember.deaf ];
+			// Collect the data.
+			collectData(voiceConnection);
 		}
 	}
 });
