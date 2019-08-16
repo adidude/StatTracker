@@ -14,7 +14,7 @@ const database = new Pool({
 });
 
 // Will connect to the database.
-await database.connect();
+database.connect();
 
 // Timer?
 const obs = new PerformanceObserver((items) => {
