@@ -67,7 +67,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 		performance.mark('A');
 		const date = new Date();
 		const month = date.getUTCMonth() + 1;
-		const timestamp = date.getUTCDate() + '.' + month + '.' + date.getUTCFullYear() + ' ' + date.getUTCHours() + ':' + date.getUTCMinutes() + ':' + date.getUTCSeconds() + ' UTC';
+		const timestamp = date.getUTCFullYear() + '-' + month + '-' + date.getUTCDate() + ' ' + date.getUTCHours() + ':' + date.getUTCMinutes() + ':' + date.getUTCSeconds() + '+00';
 
 		// If the user is in tha AFK channel.
 		if (newMember.voiceSessionID == 405374555847262219) {
