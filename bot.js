@@ -59,8 +59,8 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 	// If the user is not a bot carry out tasks, else do nothing.
 	if (!oldMember.user.bot && !newMember.user.bot) {
 		// If the user is in tha AFK channel.
-		console.log(newMember.voiceSessionID);
-		if (newMember.voiceSessionID == 405374555847262219) {
+		console.log(newMember.voiceChannelID);
+		if (newMember.voiceChannelID == 405374555847262219) {
 			// Create voiceConnection object which stores connection details.
 			const voiceConnection = [ newMember.user.tag, newMember.id, true, newMember.mute, newMember.deaf, true ];
 			// The Columns in the table are in the order:
