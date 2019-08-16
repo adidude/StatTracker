@@ -29,10 +29,14 @@ function collectData(connection) {
 	// TODO: Specify in SQL that DMY mode is used for DateStyle parameter.
 	// Adds data to file. This is PostgreSQL. New entries are added to the table voiceStateChanges.
 	performance.mark('A');
-	database.query('INSERT INTO voiceStateConnections(timestamp, tag, id, isConnected, isMuted, isDeaf) VALUES (NOW(),$1,$2,$3,$4,$5)', connection);
+	database.query('INSERT INTO voiceStateConnections(timestamp, tag, id, isConnected, isMuted, isDeaf) VALUES (NOW(),$1,$2,$3,$4,$5)', connection, (err, res) => {
+		if (err) {
+			return console.error('Error executing query', err.stack);
+		}
+		console.log(res);
+	});
 	performance.mark('B');
 	performance.measure('A to B', 'A', 'B');
-	//console.log('Interval: ' + measure.duration);
 	// The Columns in the table are in the order:
 	// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf | isAFK |
 }
@@ -98,6 +102,8 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 
 // TODO: Figure out what needs to be done on closing/crash event.
 client.on('disconnect', CloseEvent => {
+	// Disconnect from database.
+	database.end().then(() => console.log('Disconnected from database.'));
 	// Informs of reason of disconnection on console.
 	console.log('Disconnected with code ' + CloseEvent.code);
 	switch (CloseEvent.code) {
