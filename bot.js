@@ -3,8 +3,8 @@
 const Discord = require('discord.js');
 const { Pool } = require('pg');
 const client = new Discord.Client();
-const YTDL = require('ytdl-core');
-let songQue = {};
+// const YTDL = require('ytdl-core');
+// let songQue = {};
 
 // Use Heroku Postgres database
 const database = new Pool({
@@ -32,7 +32,7 @@ client.once('ready', () => {
 	console.log('Connected!');
 });
 
-const prefix = '[';
+// const prefix = '[';
 
 // function playSong(connection, ){
 
