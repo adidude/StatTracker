@@ -2,10 +2,9 @@
 */
 const Discord = require('discord.js');
 const { Pool } = require('pg');
-// TEMPORARY
-// const { PerformanceObserver, performance } = require('perf_hooks');
-// TEMPORARY
 const client = new Discord.Client();
+const YTDL = require('ytdl-core');
+let songQue = {};
 
 // Use Heroku Postgres database
 const database = new Pool({
@@ -15,20 +14,6 @@ const database = new Pool({
 
 // Will connect to the database.
 database.connect();
-
-// Timer
-/*
-let measurements = 1;
-const obs = new PerformanceObserver((items) => {
-	console.log(measurements + ') ' + items.getEntries()[0].duration);
-	performance.clearMarks();
-	measurements++;
-});
-obs.observe({ entryTypes: ['measure'] }); */
-// performance.mark('A');
-// performance.mark('B');
-// performance.measure('A to B', 'A', 'B');
-// Timer End
 
 // Will collect data
 function collectData(connection) {
@@ -47,10 +32,61 @@ client.once('ready', () => {
 	console.log('Connected!');
 });
 
+const prefix = '[';
+
+// function playSong(connection, ){
+
+// }
+
 // TODO: message based stuff, music.
-/* client.on('message', message => {
-	message.reply('Yes I hear you.');
-});*/
+client.on('message', message => {
+	// If the command prefix is used in a channel besides the request channel.
+	if ((message.content.startsWith('-') || message.content.startsWith('!') || message.content.startsWith(';;')) && message.channel.name != 'requests') {
+		// Inform the user.
+		message.reply('Yo fool! You\'re supposed to put music related mumbo jumbo in the requests channel!');
+		// Deletes message
+		message.delete();
+	}
+	/* =========-WIP-=============
+	// If the message does not start with the command character or the user is a bot.
+	if (!message.content.startsWith(prefix) || message.author.bot) {
+		// Do nothing
+		return;
+	}
+	// Get the message as an array seperated by spaces and remove the prefix.
+	const args = message.content.slice(prefix.length).split(/ +/);
+	// Remove the first value in the array and store it.
+	const command = args.shift().toLowerCase();
+	// If there are no arguments.
+	if (!args.length) {
+		// Send a message in the channel.
+		message.channel.send('No choice was provided.');
+	}
+	// The switch determines which path the bot will take.
+	switch (command) {
+	case 'p':
+		// If the user is in a voice channel.
+		if (message.member.voiceChannel) {
+			// Bot joins a voice channel
+			message.member.voiceChannel.join();
+				.then(connection => {
+					// Play song
+					const dispatcher = connection.playStream(YTDL(songQue[0], {filter: 'audioonly'}));
+					// Remove from que.
+					songQue.shift();
+					// Check if there is another song in que.
+
+			});
+		}
+		else {
+			// Informs user to join a channel.
+			message.channel.send('You are not connected to a voice channel.');
+		}
+		break;
+	default:
+	}
+	===========WIP======== */
+});
 
 // TODO: Fix issue where when user recieves a call and accepts the database fails to store data.
 
