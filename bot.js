@@ -43,9 +43,7 @@ client.on('message', message => {
 	// If the command prefix is used in a channel besides the request channel.
 	if ((message.content.startsWith('-') || message.content.startsWith('!') || message.content.startsWith(';;') || message.content.startsWith(';') || message.content.startsWith('[')) && message.channel.name != 'requests') {
 		// Inform the user.
-		// message.reply('Yo fool! You\'re supposed to put music related mumbo jumbo in the requests channel!');
-		// ALT
-		message.author.sendMessage('Yo fool! You\'re supposed to put music related mumbo jumbo in the requests channel!');
+		message.reply('Yo fool! You\'re supposed to put music related mumbo jumbo in the requests channel!');
 		// Deletes message
 		message.delete();
 	}
