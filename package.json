@@ -12,7 +12,6 @@
   "dependencies": {
     "discord.js": "^11.5.1",
     "eslint": "^6.1.0",
-    "ffmpeg-binaries": "^4.0.0",
     "node-opus": "^0.3.2",
     "pg": "^7.12.0"
   },
