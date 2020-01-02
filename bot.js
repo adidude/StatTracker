@@ -94,7 +94,7 @@ client.on('guildMemberUpdate', (oldMember, newMember) => {
 	// Store both values locally to avoid using the api calls more than neccessary.
 	const newName = newMember.user.tag;
 	const oldName = oldMember.user.tag;
-
+	console.log('newName: ' + newName + '\noldName: ' + oldName);
 	// If the username has changed
 	if (oldName != newName) {
 		// Form the update query
@@ -106,7 +106,7 @@ client.on('guildMemberUpdate', (oldMember, newMember) => {
 				return console.error('Error executing query', err.stack);
 			}
 		});
-		console.log('Updated Username for' + oldName);
+		console.log('Updated Username for ' + oldName);
 	}
 });
 
