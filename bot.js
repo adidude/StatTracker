@@ -34,11 +34,7 @@ client.once('ready', () => {
 
 // const prefix = '[';
 
-// function playSong(connection, ){
-
-// }
-
-// TODO: message based stuff, music.
+// Will scold users for not posting in the right channel for music.
 client.on('message', message => {
 	// If the command prefix is used in a channel besides the request channel.
 	if ((message.content.startsWith('-') || message.content.startsWith('!') || message.content.startsWith(';;') || message.content.startsWith(';') || message.content.startsWith('[')) && message.channel.name != 'requests') {
@@ -47,45 +43,6 @@ client.on('message', message => {
 		// Deletes message
 		message.delete();
 	}
-	/* =========-WIP-=============
-	// If the message does not start with the command character or the user is a bot.
-	if (!message.content.startsWith(prefix) || message.author.bot) {
-		// Do nothing
-		return;
-	}
-	// Get the message as an array seperated by spaces and remove the prefix.
-	const args = message.content.slice(prefix.length).split(/ +/);
-	// Remove the first value in the array and store it.
-	const command = args.shift().toLowerCase();
-	// If there are no arguments.
-	if (!args.length) {
-		// Send a message in the channel.
-		message.channel.send('No choice was provided.');
-	}
-	// The switch determines which path the bot will take.
-	switch (command) {
-	case 'p':
-		// If the user is in a voice channel.
-		if (message.member.voiceChannel) {
-			// Bot joins a voice channel
-			message.member.voiceChannel.join();
-				.then(connection => {
-					// Play song
-					const dispatcher = connection.playStream(YTDL(songQue[0], {filter: 'audioonly'}));
-					// Remove from que.
-					songQue.shift();
-					// Check if there is another song in que.
-
-			});
-		}
-		else {
-			// Informs user to join a channel.
-			message.channel.send('You are not connected to a voice channel.');
-		}
-		break;
-	default:
-	}
-	===========WIP======== */
 });
 
 // TODO: Fix issue where when user recieves a call and accepts the database fails to store data.
@@ -132,13 +89,28 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 	}
 });
 
-// TODO: Make following section functional.
 // Will know when a user changes username and will update all entries with new username.
-/* client.on('guildMemberUpdate', (oldMember, newMember) => {
+client.on('guildMemberUpdate', (oldMember, newMember) => {
+	// Store both values locally to avoid using the api calls more than neccessary.
+	const newName = newMember.user.tag;
+	const oldName = oldMember.user.tag;
 
-});*/
+	// If the username has changed
+	if (oldName != newName) {
+		// Form the update query
+		const update = 'UPDATE voiceStateConnections SET tag=\'' + newName + '\' WHERE tag=\'' + oldName + '\'';
+		// Run the query
+		database.query(update, (err)=>{
+			if (err) {
+				// Will print out errors
+				return console.error('Error executing query', err.stack);
+			}
+		});
+		console.log('Updated Username for' + oldName);
+	}
+});
 
-// TODO: Figure out what needs to be done on closing/crash event.
+// TODO: Figure out what needs to be done on closing/crash event, and if this is enough.
 client.on('disconnect', CloseEvent => {
 	// Disconnect from database.
 	database.end().then(() => console.log('Disconnected from database.'));
