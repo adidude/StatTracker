@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Tracks voice connectivity statistics of a discord guild.",
   "main": "bot.js",
+  "engines":{
+    "node":"10.16.0",
+    "npm":"6.9.0"
+  },
   "scripts": {
     "start": "node bot.js"
   },
