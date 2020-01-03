@@ -106,7 +106,7 @@ client.on('userUpdate', (oldUser, newUser) => {
 				return console.error('Error executing query', err.stack);
 			}
 			else {
-				return console.log('Error executing query: ', res);
+				return console.log('Successful query...!' + res);
 			}
 		});
 		console.log('Updated Username for ' + oldName);
