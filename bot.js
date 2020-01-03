@@ -90,20 +90,23 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 });
 
 // Will know when a user changes username and will update all entries with new username.
-client.on('guildMemberUpdate', (oldMember, newMember) => {
+client.on('userUpdate', (oldUser, newUser) => {
 	// Store both values locally to avoid using the api calls more than neccessary.
-	const newName = newMember.user.tag;
-	const oldName = oldMember.user.tag;
+	const newName = newUser.tag;
+	const oldName = oldUser.tag;
 	console.log('newName: ' + newName + '\noldName: ' + oldName);
 	// If the username has changed
 	if (oldName != newName) {
 		// Form the update query
 		const update = 'UPDATE voiceStateConnections SET tag=\'' + newName + '\' WHERE tag=\'' + oldName + '\'';
 		// Run the query
-		database.query(update, (err)=>{
+		database.query(update, (err, res)=>{
 			if (err) {
 				// Will print out errors
 				return console.error('Error executing query', err.stack);
+			}
+			else {
+				return console.log('Error executing query: ' + res);
 			}
 		});
 		console.log('Updated Username for ' + oldName);
