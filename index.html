@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<?php
+  //Select a random background image.
+  $background = array("chicago.jpg","duality.jpg","faceEye.jpg","japan.jpg","lanterns.jpg","Om.jpg","portal.jpg","skyMountain.jpg","skyWhale.jpg","tunnel.jpg","skyLand.jpg");
+  $selImg = rand(0,count($background)-1);
+  $currbg = "$background[$selImg]";
+?>
+<head>
+  <title>Avoiding Responsibilities Usage Stats</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="author" content="Aditya K. Menon">
+
+  <!--Bootstrap import-->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+  <!--Background Image-->
+  <style type="text/css">
+    body{
+      background: url(images/<?php echo $currbg; ?>) no-repeat;
+      background-size: 100% 100%;
+    }
+  </style>
+  <!--Import nodebowl to allow node execution in browser.-->
+  <script src="node_modules/nodebowl/dist/nodebowl.js"></script>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm">
+        <p>Test</p>
+      </div>
+      <!--This is the Central Column with Graphs-->
+      <div class="col-7">
+        <canvas id="Graph"></canvas>
+        <p id="data"></p>
+        <script>
+          //TODO: Fix this
+          const{ run } = window.nodebowl;
+          run('/DrawChart.js');
+        </script>
+      </div>
+      <div class="col-sm">
+
+      </div>
+    </div>
+  </div>
+  <!--Self made scripts-->
+
+  <!--Bootstrap scripts-->
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+</body>
+</html>
