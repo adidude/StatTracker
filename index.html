@@ -5,6 +5,24 @@
   $background = array("chicago.jpg","duality.jpg","faceEye.jpg","japan.jpg","lanterns.jpg","Om.jpg","portal.jpg","skyMountain.jpg","skyWhale.jpg","tunnel.jpg","skyLand.jpg");
   $selImg = rand(0,count($background)-1);
   $currbg = "$background[$selImg]";
+
+  //Connect to Database
+  require '../tmp/db.php';
+  echo $allData;
+
+  function console_log($output, $with_script_tags = true)
+  {
+    $js_code = 'console.log(' . json_encode($output, JSON_HEX_TAG) .');';
+
+    if ($with_script_tags)
+    {
+        $js_code = '<script>' . $js_code . '</script>';
+    }
+
+    echo $js_code;
+  }
+
+console_log($allData);
 ?>
 <head>
   <title>Avoiding Responsibilities Usage Stats</title>
@@ -18,27 +36,48 @@
   <!--Background Image-->
   <style type="text/css">
     body{
-      background: url(images/<?php echo $currbg; ?>) no-repeat;
-      background-size: 100% 100%;
+      /*TODO: Keep in php version*/
+      /*background: url(images/<?php echo $currbg; ?>) no-repeat;*/
+      background: url(images/japan.jpg);
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center center;
+      background-attachment: fixed;
     }
   </style>
-  <!--Import nodebowl to allow node execution in browser.-->
-  <script src="node_modules/nodebowl/dist/nodebowl.js"></script>
+
+  <!--Chart.js is imported here. Moment.js is installed along Chart.js as dependency.-->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
 </head>
 <body>
   <div class="container-fluid">
     <div class="row">
       <div class="col-sm">
-        <p>Test</p>
+
       </div>
-      <!--This is the Central Column with Graphs-->
-      <div class="col-7">
+      <div class="col-7" style="background-color: rgba(12, 70, 157, 0.74);">
         <canvas id="Graph"></canvas>
-        <p id="data"></p>
         <script>
-          //TODO: Fix this
-          const{ run } = window.nodebowl;
-          run('/DrawChart.js');
+          //Set text color
+          Chart.defaults.global.defaultFontColor = '#ffffff';
+          var nowDateTime = new Date();
+          var twoDRep = document.getElementById("Graph").getContext('2d');
+          var chart = new Chart(twoDRep,{
+            type: 'line',
+            data: {
+              //TODO: Put proper labels as these are test labels.
+              //labels:[<?php  ?>],
+              labels:['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+              datasets: [{
+                //TODO: Add Actual Data. The following is all sample data
+                label: 'My First dataset',
+                backgroundColor: 'rgb(0, 102, 0)',
+                borderColor: 'rgb(255, 153, 51)',
+                data: [12, 19, 3, 5, 2, 3]
+                //data: [<?php ?>]
+              }]
+            }
+          });
         </script>
       </div>
       <div class="col-sm">
