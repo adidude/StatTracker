@@ -46,7 +46,7 @@ client.on('message', message => {
 		message.delete();
 	}
 	// Counter
-	if(message.content == 'poggers') {
+	if(message.content.toLowerCase() == 'poggers' || message.content.toLowerCase() == 'pog' || message.content.toLowerCase() == 'pogchamp') {
 		pogcounter++ ;
 		message.reply('Poggers: ' + pogcounter);
 	}
