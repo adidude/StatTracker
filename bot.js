@@ -3,6 +3,8 @@
 const Discord = require('discord.js');
 const { Pool } = require('pg');
 const client = new Discord.Client();
+// Counter Variables
+let pogcounter = 0;
 // const YTDL = require('ytdl-core');
 // let songQue = {};
 
@@ -42,6 +44,11 @@ client.on('message', message => {
 		message.reply('Yo fool! You\'re supposed to put music related mumbo jumbo in the requests channel!');
 		// Deletes message
 		message.delete();
+	}
+	// Counter
+	if(message.content == 'poggers') {
+		pogcounter++ ;
+		message.reply('Poggers: ' + pogcounter);
 	}
 });
 
