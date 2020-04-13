@@ -57,28 +57,7 @@ console_log($allData);
       </div>
       <div class="col-7" style="background-color: rgba(12, 70, 157, 0.74);">
         <canvas id="Graph"></canvas>
-        <script>
-          //Set text color
-          Chart.defaults.global.defaultFontColor = '#ffffff';
-          var nowDateTime = new Date();
-          var twoDRep = document.getElementById("Graph").getContext('2d');
-          var chart = new Chart(twoDRep,{
-            type: 'line',
-            data: {
-              //TODO: Put proper labels as these are test labels.
-              //labels:[<?php  ?>],
-              labels:['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-              datasets: [{
-                //TODO: Add Actual Data. The following is all sample data
-                label: 'My First dataset',
-                backgroundColor: 'rgb(0, 102, 0)',
-                borderColor: 'rgb(255, 153, 51)',
-                data: [12, 19, 3, 5, 2, 3]
-                //data: [<?php ?>]
-              }]
-            }
-          });
-        </script>
+        <script src="DrawChart.js"></script>
       </div>
       <div class="col-sm">
 

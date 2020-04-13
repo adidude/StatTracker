@@ -24,19 +24,23 @@ database.query('SELECT * FROM voiceStateConnections',(err,res)=>{
 // Disconnect from database.
 database.end().then(() => console.log('Disconnected from database.'));
 
+//Set text color
+Chart.defaults.global.defaultFontColor = '#ffffff';
 var nowDateTime = new Date();
 var twoDRep = document.getElementById("Graph").getContext('2d');
 var chart = new Chart(twoDRep,{
   type: 'line',
   data: {
     //TODO: Put proper labels as these are test labels.
-    labels:['Monday','Tuesday','Wednesday'],
+    //labels:[<?php  ?>],
+    labels:['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
     datasets: [{
       //TODO: Add Actual Data. The following is all sample data
       label: 'My First dataset',
-      backgroundColor: 'rgb(255, 99, 132)',
-      borderColor: 'rgb(255, 99, 132)',
-      data: [5,6,7]
+      backgroundColor: 'rgb(0, 102, 0)',
+      borderColor: 'rgb(255, 153, 51)',
+      data: [12, 19, 3, 5, 2, 3]
+      //data: [<?php ?>]
     }]
   }
 });
