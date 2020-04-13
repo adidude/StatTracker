@@ -1,6 +1,6 @@
-/** Import discord.js API library and login token.
-*/
+// Import discord.js API library and login token.
 const Discord = require('discord.js');
+const mysql = require('mysql');
 const { Pool } = require('pg');
 const client = new Discord.Client();
 // Counter Variables
@@ -8,11 +8,26 @@ let pogcounter = 0;
 // const YTDL = require('ytdl-core');
 // let songQue = {};
 
+// Database credentials
+const connDet = mysql.createConnection({
+	host: process.env.JAWSDB_URL,
+	user: process.env.username,
+	password: process.env.pass,
+	database: process.env.DB
+});
+
 // Use Heroku Postgres database
 const database = new Pool({
 	connectionString: process.env.DATABASE_URL,
 	ssl: true,
 });
+
+connDet.connect(function(err) {
+	console.log('Connected to SharkDB');
+	if(err) {
+		console.log('DB connection failed');
+	}
+})
 
 // Will connect to the database.
 database.connect();
@@ -124,6 +139,12 @@ client.on('userUpdate', (oldUser, newUser) => {
 client.on('disconnect', CloseEvent => {
 	// Disconnect from database.
 	database.end().then(() => console.log('Disconnected from database.'));
+	connDet.end(function(err) {
+		if(err) {
+			console.log('error: ' + err.message);
+		}
+		console.log('Disconnected from SharkDB');
+	});
 	// Informs of reason of disconnection on console.
 	console.log('Disconnected with code ' + CloseEvent.code);
 	switch (CloseEvent.code) {
