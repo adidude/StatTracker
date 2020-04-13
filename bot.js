@@ -10,7 +10,7 @@ let pogcounter = 0;
 
 // Database credentials
 const connDet = mysql.createConnection({
-	host: process.env.JAWSDB_URL,
+	host: process.env.host,
 	user: process.env.username,
 	password: process.env.pass,
 	database: process.env.DB
