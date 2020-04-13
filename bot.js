@@ -23,9 +23,11 @@ const database = new Pool({
 });
 
 connDet.connect(function(err) {
-	console.log('Connected to SharkDB');
 	if(err) {
 		console.log('DB connection failed');
+	}
+	else {
+		console.log('Connected to SharkDB');
 	}
 })
 
@@ -143,7 +145,9 @@ client.on('disconnect', CloseEvent => {
 		if(err) {
 			console.log('error: ' + err.message);
 		}
-		console.log('Disconnected from SharkDB');
+		else {
+			console.log('Disconnected from SharkDB');
+		}
 	});
 	// Informs of reason of disconnection on console.
 	console.log('Disconnected with code ' + CloseEvent.code);
