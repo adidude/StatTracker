@@ -42,15 +42,15 @@ function collectData(connection) {
 			return console.error('Error executing query', err.stack);
 		}
 	});
-	// add data
-	connDet.query('INSERT INTO voiceStateConnections(timestamp, tag, id, isConnected, isMuted, isDeaf, isAFK) VALUES (NOW(),$1,$2,$3,$4,$5,$6)', connection, (err)=> {
+	// TODO: Insert data without failing
+	/* connDet.query('INSERT INTO voiceStateConnections(timestamp, tag, id, isConnected, isMuted, isDeaf, isAFK) VALUES (NOW(),$1,$2,$3,$4,$5,$6)', connection, (err)=> {
 		if (err) {
 			return console.error('Error executing query', err.message);
 		}
 		else {
 			console.log('Successful addition of data to DB');
 		}
-	});
+	});*/
 	// The Columns in the table are in the order:
 	// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf | isAFK |
 }
