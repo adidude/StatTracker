@@ -44,7 +44,7 @@ function collectData(connection) {
 	});
 	const sqlQuery = 'INSERT INTO voiceStateConnections(timestamp, tag, id, isConnected, isMuted, isDeaf, isAFK) VALUES (NOW(),' + connection[0] + ',' + connection[1] + ',' + connection[2] + ',' + connection[3] + ',' + connection[4] + ',' + connection[5] + ')';
 	// TODO: Insert data without failing
-	connDet.query(sqlQuery, (err)=> {
+	connDet.query(sqlQuery, function(err) {
 		if (err) {
 			return console.error('Error executing query', err.message);
 		}
