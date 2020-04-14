@@ -48,9 +48,6 @@ function collectData(connection) {
 		if (err) {
 			return console.error('Error executing query', err.message);
 		}
-		else {
-			console.log('Successful addition of data to DB');
-		}
 	});
 	// The Columns in the table are in the order:
 	// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf | isAFK |
@@ -136,6 +133,15 @@ client.on('userUpdate', (oldUser, newUser) => {
 		// Run the query
 		database.query(update, (err, res)=>{
 			if (err) {
+				// Will print out errors
+				return console.error('Error executing query', err.stack);
+			}
+			else {
+				return console.log('Successful query...!' + res);
+			}
+		});
+		connDet.query(update, function(err, res) {
+			if(err) {
 				// Will print out errors
 				return console.error('Error executing query', err.stack);
 			}
