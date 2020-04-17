@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+<div id="phpInteraction" style="display: none;">
 <?php
   //Select a random background image.
   $background = array("chicago.jpg","duality.jpg","faceEye.jpg","japan.jpg","lanterns.jpg","Om.jpg","portal.jpg","skyMountain.jpg","skyWhale.jpg","tunnel.jpg","skyLand.jpg");
@@ -8,7 +9,6 @@
 
   //Connect to Database
   require '../tmp/db.php';
-  echo $allData;
 
   function console_log($output, $with_script_tags = true)
   {
@@ -22,8 +22,21 @@
     echo $js_code;
   }
 
-console_log($allData);
+  foreach ($allData as &$line) {
+    $count = 1;
+    foreach ($line as &$val) {
+      if ($count % 2) {
+        $semiprint = $val.",";
+        if ($count == 13) {
+          $semiprint = $val."|";
+        }
+        echo $semiprint;
+      }
+      $count++;
+    }
+  }
 ?>
+</div>
 <head>
   <title>Avoiding Responsibilities Usage Stats</title>
   <meta charset="utf-8">
