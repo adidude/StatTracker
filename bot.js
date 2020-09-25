@@ -1,57 +1,10 @@
 // Import discord.js API library and login token.
 const Discord = require('discord.js');
-const mysql = require('mysql');
-const { Pool } = require('pg');
 const client = new Discord.Client();
 // Counter Variables
 let pogcounter = 0;
 // const YTDL = require('ytdl-core');
 // let songQue = {};
-
-// Database credentials
-const connDet = mysql.createConnection({
-	host: process.env.host,
-	user: process.env.username,
-	password: process.env.pass,
-	database: process.env.DB
-});
-
-// Use Heroku Postgres database
-const database = new Pool({
-	connectionString: process.env.DATABASE_URL,
-	ssl: true,
-});
-
-connDet.connect(function(err) {
-	if(err) {
-		console.log('DB connection failed');
-	}
-	else {
-		console.log('Connected to SharkDB');
-	}
-})
-
-// Will connect to the database.
-database.connect();
-
-// Will collect data
-function collectData(connection) {
-	// Adds data to file. This is PostgreSQL. New entries are added to the table voiceStateChanges.
-	database.query('INSERT INTO voiceStateConnections(timestamp, tag, id, isConnected, isMuted, isDeaf, isAFK) VALUES (NOW(),$1,$2,$3,$4,$5,$6)', connection, (err) => {
-		if (err) {
-			return console.error('Error executing query', err.stack);
-		}
-	});
-	const sqlQuery = 'INSERT INTO voiceStateConnections(timestamp, tag, id, isConnected, isMuted, isDeaf, isAFK) VALUES (NOW(),\'' + connection[0] + '\',\'' + connection[1] + '\',' + connection[2] + ',' + connection[3] + ',' + connection[4] + ',' + connection[5] + ')';
-	// TODO: Insert data without failing
-	connDet.query(sqlQuery, function(err) {
-		if (err) {
-			return console.error('Error executing query', err.message);
-		}
-	});
-	// The Columns in the table are in the order:
-	// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf | isAFK |
-}
 
 // Inform us when connected to server.
 client.once('ready', () => {
@@ -78,93 +31,8 @@ client.on('message', message => {
 
 // TODO: Fix issue where when user recieves a call and accepts the database fails to store data.
 
-// When a user leaves/joins a voice channel
-client.on('voiceStateUpdate', (oldMember, newMember) => {
-	// If the user is not a bot carry out tasks, else do nothing.
-	if (!oldMember.user.bot && !newMember.user.bot) {
-		// If the user is in tha AFK channel.
-		if (newMember.voiceChannelID == 405374555847262219) {
-			// Create voiceConnection object which stores connection details.
-			const voiceConnection = [ newMember.user.tag, newMember.id, true, newMember.mute, newMember.deaf, true ];
-			// The Columns in the table are in the order:
-			// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf | isAFK |
-
-			// Collect the data.
-			collectData(voiceConnection);
-		} // If a user joins or changes mute/deafened state.
-		else if ((typeof oldMember.voiceChannel === 'undefined' && newMember.voiceChannel != null) || oldMember.mute != newMember.mute || oldMember.deaf != newMember.deaf) {
-			// Create voiceConnection object which stores connection details.
-			const voiceConnection = [ newMember.user.tag, newMember.id, true, newMember.mute, newMember.deaf, newMember.deaf ];
-			// The Columns in the table are in the order:
-			// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf | isAFK |
-
-			// Collect the data.
-			collectData(voiceConnection);
-		} // If user leaves.
-		else if (typeof newMember.voiceChannel === 'undefined') {
-			// Create voiceConnection object which stores connection details.
-			// The Columns in the table are in the order:
-			// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf | isAFK |
-			const voiceConnection = [ newMember.user.tag, newMember.id, false, newMember.mute, newMember.deaf, false ];
-			// Collect the data.
-			collectData(voiceConnection);
-		} // If user leaves the AFK channel.
-		else if (oldMember.voiceChannelID == 405374555847262219 && typeof newMember.voiceChannel != 'undefined') {
-			// Create voiceConnection object which stores connection details.
-			// The Columns in the table are in the order:
-			// | Timestamp | Tag | ID | isConnected | isMuted | isDeaf | isAFK |
-			const voiceConnection = [ newMember.user.tag, newMember.id, true, newMember.mute, newMember.deaf, newMember.deaf ];
-			// Collect the data.
-			collectData(voiceConnection);
-		}
-	}
-});
-
-// Will know when a user changes username and will update all entries with new username.
-client.on('userUpdate', (oldUser, newUser) => {
-	// Store both values locally to avoid using the api calls more than neccessary.
-	const newName = newUser.tag;
-	const oldName = oldUser.tag;
-	console.log('newName: ' + newName + '\noldName: ' + oldName);
-	// If the username has changed
-	if (oldName != newName) {
-		// Form the update query
-		const update = 'UPDATE voiceStateConnections SET tag=\'' + newName + '\' WHERE tag=\'' + oldName + '\'';
-		// Run the query
-		database.query(update, (err, res)=>{
-			if (err) {
-				// Will print out errors
-				return console.error('Error executing query', err.stack);
-			}
-			else {
-				return console.log('Successful query...!' + res);
-			}
-		});
-		connDet.query(update, function(err, res) {
-			if(err) {
-				// Will print out errors
-				return console.error('Error executing query', err.stack);
-			}
-			else {
-				return console.log('Successful query...!' + res);
-			}
-		});
-		console.log('Updated Username for ' + oldName);
-	}
-});
-
 // TODO: Figure out what needs to be done on closing/crash event, and if this is enough.
 client.on('disconnect', CloseEvent => {
-	// Disconnect from database.
-	database.end().then(() => console.log('Disconnected from database.'));
-	connDet.end(function(err) {
-		if(err) {
-			console.log('error: ' + err.message);
-		}
-		else {
-			console.log('Disconnected from SharkDB');
-		}
-	});
 	// Informs of reason of disconnection on console.
 	console.log('Disconnected with code ' + CloseEvent.code);
 	switch (CloseEvent.code) {
