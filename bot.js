@@ -31,10 +31,25 @@ client.on('message', message => {
 
 //Assigns roles to new members
 client.on('guildMemberAdd', member => {
-	const roleAssignMsg = new Discord.Message(client, "To get access to the server react with the person who invited you here.", 759165571798401075);
+	const user = "@" + member.nickname
+	//Sends a message to the channel mentioning a user
+	const roleAssignMsg = new Discord.Message(client, user + " To get access to the server react with the person who invited you here.", client.channels.fetch('759165571798401075'));
+	//shortcut for emojis
+	const emojis = roleAssignMsg.guild.emojis.cache;
+	roleAssignMsg.react(emojis.get('389860539146436608')); //Zidan
+	roleAssignMsg.react(emojis.get('493493598176673802')); //Maitham
+	roleAssignMsg.react(emojis.get('389860488579907594')); //Kyle
+	roleAssignMsg.react(emojis.get('389860119019651073')); //Arfaan
+	roleAssignMsg.react(emojis.get('389860495407972352')); //Adi
+	roleAssignMsg.react(emojis.get('494502157131972634')); //Nick
+	/* TODO: Add other roles+emojis
+	roleAssignMsg.react(emojis.get(''));
+	roleAssignMsg.react(emojis.get(''));
+	roleAssignMsg.react(emojis.get(''));
+	roleAssignMsg.react(emojis.get(''));
+	roleAssignMsg.react(emojis.get(''));*/
+	//TODO: add roles to users.
 });
-
-// TODO: Fix issue where when user recieves a call and accepts the database fails to store data.
 
 // TODO: Figure out what needs to be done on closing/crash event, and if this is enough.
 client.on('disconnect', CloseEvent => {
