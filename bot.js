@@ -35,11 +35,11 @@ client.on('guildMemberAdd', member => {
 	try
 	{
 		lineBroken++;
-		const user = "@" + member.nickname;
+		const msg = "@" + member.nickname + " To get access to the server react with the person who invited you here.";
 
 		lineBroken++;
 		//Sends a message to the channel mentioning a user
-		const roleAssignMsg = new Discord.Message(client, user + " To get access to the server react with the person who invited you here.", client.channels.fetch('759165571798401075'));
+		const roleAssignMsg = new Discord.Message(client, msg, client.channels.fetch('759165571798401075'));
 
 		lineBroken++;
 		//shortcut for emojis
