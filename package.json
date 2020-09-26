@@ -1,0 +1,27 @@
+{
+  "name": "stattracker",
+  "version": "2.0.0",
+  "description": "Is a personal discord server bot to assign roles and ensure users are using the right channels for music.",
+  "main": "bot.js",
+  "dependencies": {
+    "discord.js": "^12.3.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adidude/StatTracker.git"
+  },
+  "keywords": [
+    "discord",
+    "bot"
+  ],
+  "author": "Aditya Kumar Menon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adidude/StatTracker/issues"
+  },
+  "homepage": "https://github.com/adidude/StatTracker#readme"
+}
