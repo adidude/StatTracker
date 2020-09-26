@@ -1,6 +1,6 @@
 // Import discord.js API library and login token.
 const Discord = require('discord.js');
-const client = new Discord.Client();
+const client = new Discord.Client({partials: ["CHANNEL","MESSAGE","REACTION"]});
 // Counter Variables
 let pogcounter = 0;
 // const YTDL = require('ytdl-core');
@@ -27,6 +27,11 @@ client.on('message', message => {
 		pogcounter++ ;
 		message.reply('Poggers: ' + pogcounter);
 	}
+});
+
+//Assigns roles to new members
+client.on('guildMemberAdd', member => {
+	const roleAssignMsg = new Discord.Message(client, "To get access to the server react with the person who invited you here.", 759165571798401075);
 });
 
 // TODO: Fix issue where when user recieves a call and accepts the database fails to store data.

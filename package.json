@@ -1,6 +1,6 @@
 {
   "name": "stattracker",
-  "version": "2.0.0",
+  "version": "8.5.0",
   "description": "Is a personal discord server bot to assign roles and ensure users are using the right channels for music.",
   "main": "bot.js",
   "dependencies": {
