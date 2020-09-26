@@ -31,7 +31,7 @@ client.on('message', message => {
 
 //Assigns roles to new members
 client.on('guildMemberAdd', member => {
-	const user = "@" + member.nickname
+	const user = "@" + member.nickname;
 	//Sends a message to the channel mentioning a user
 	const roleAssignMsg = new Discord.Message(client, user + " To get access to the server react with the person who invited you here.", client.channels.fetch('759165571798401075'));
 	//shortcut for emojis
