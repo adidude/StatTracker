@@ -1,80 +1,86 @@
 // Import discord.js API library and login token.
 const Discord = require('discord.js');
-const client = new Discord.Client({partials: ["CHANNEL","MESSAGE","REACTION"]});
+const client = new Discord.Client({ partials: ['CHANNEL', 'MESSAGE', 'REACTION'] });
 // Counter Variables
 let pogcounter = 0;
 // const YTDL = require('ytdl-core');
 // let songQue = {};
 
 // Inform us when connected to server.
-client.once('ready', () => {
+client.once('ready', () =>
+{
 	console.log('Connected!');
 });
 
 // const prefix = '[';
 
 // Will scold users for not posting in the right channel for music.
-client.on('message', message => {
+client.on('message', message =>
+{
 	// If the command prefix is used in a channel besides the request channel.
-	if ((message.content.startsWith('-') || message.content.startsWith('!') || message.content.startsWith(';;') || message.content.startsWith(';') || message.content.startsWith('[')) && message.channel.name != 'requests') {
+	if ((message.content.startsWith('-') || message.content.startsWith('!') || message.content.startsWith(';;') || message.content.startsWith(';') || message.content.startsWith('[')) && message.channel.name != 'requests')
+	{
 		// Inform the user.
 		message.reply('Yo fool! You\'re supposed to put music related mumbo jumbo in the requests channel!');
 		// Deletes message
 		message.delete();
 	}
 	// Counter
-	if(message.content.toLowerCase() == 'poggers' || message.content.toLowerCase() == 'pog' || message.content.toLowerCase() == 'pogchamp') {
+	if(message.content.toLowerCase() == 'poggers' || message.content.toLowerCase() == 'pog' || message.content.toLowerCase() == 'pogchamp')
+	{
 		pogcounter++ ;
 		message.reply('Poggers: ' + pogcounter);
 	}
 });
 
-//Assigns roles to new members
-client.on('guildMemberAdd', member => {
+// Assigns roles to new members
+client.on('guildMemberAdd', member =>
+{
 	let lineBroken = 0;
 	try
 	{
 		lineBroken++;
-		const msg = "@" + member.nickname + " To get access to the server react with the person who invited you here.";
+		const msg = '@' + member.nickname + ' To get access to the server react with the person who invited you here.';
 
 		lineBroken++;
-		//Sends a message to the channel mentioning a user
+		// Sends a message to the channel mentioning a user
 		const roleAssignMsg = new Discord.Message(client, msg, client.channels.fetch('759165571798401075'));
-
 		lineBroken++;
-		//shortcut for emojis
+		// shortcut for emojis
 		const emojis = roleAssignMsg.guild.emojis.cache;
 		lineBroken++;
-		roleAssignMsg.react(emojis.get('389860539146436608')); //Zidan
+		roleAssignMsg.react(emojis.get('389860539146436608')); // Zidan
 		lineBroken++;
-		roleAssignMsg.react(emojis.get('493493598176673802')); //Maitham
+		roleAssignMsg.react(emojis.get('493493598176673802')); // Maitham
 		lineBroken++;
-		roleAssignMsg.react(emojis.get('389860488579907594')); //Kyle
+		roleAssignMsg.react(emojis.get('389860488579907594')); // Kyle
 		lineBroken++;
-		roleAssignMsg.react(emojis.get('389860119019651073')); //Arfaan
+		roleAssignMsg.react(emojis.get('389860119019651073')); // Arfaan
 		lineBroken++;
-		roleAssignMsg.react(emojis.get('389860495407972352')); //Adi
+		roleAssignMsg.react(emojis.get('389860495407972352')); // Adi
 		lineBroken++;
-		roleAssignMsg.react(emojis.get('494502157131972634')); //Nick
+		roleAssignMsg.react(emojis.get('494502157131972634')); // Nick
 		/* TODO: Add other roles+emojis
 		roleAssignMsg.react(emojis.get(''));
 		roleAssignMsg.react(emojis.get(''));
 		roleAssignMsg.react(emojis.get(''));
 		roleAssignMsg.react(emojis.get(''));
 		roleAssignMsg.react(emojis.get(''));*/
-		//TODO: add roles to users.
+		// TODO: add roles to users.
 	}
 	catch(e)
 	{
-		console.log("Code broke at line " + lineBroken);
+		console.log('Code broke at line ' + lineBroken);
 	}
 });
 
 // TODO: Figure out what needs to be done on closing/crash event, and if this is enough.
-client.on('disconnect', CloseEvent => {
+client.on('disconnect', CloseEvent =>
+{
 	// Informs of reason of disconnection on console.
 	console.log('Disconnected with code ' + CloseEvent.code);
-	switch (CloseEvent.code) {
+	switch (CloseEvent.code)
+	{
 	case 1000:
 		console.log('Normal Closure');
 		break;
