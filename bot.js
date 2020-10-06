@@ -20,8 +20,6 @@ client.on('message', message =>
 	// If the command prefix is used in a channel besides the request channel.
 	if ((message.content.startsWith('-') || message.content.startsWith('!') || message.content.startsWith(';;') || message.content.startsWith(';') || message.content.startsWith('[')) && message.channel.name != 'requests')
 	{
-		// Inform the user.
-		message.reply('Yo fool! You\'re supposed to put music related mumbo jumbo in the requests channel!');
 		// Deletes message
 		message.delete();
 	}
@@ -33,48 +31,91 @@ client.on('message', message =>
 	}
 });
 
-// Assigns roles to new members
+// Display message to assign roles to new members
 client.on('guildMemberAdd', member =>
 {
-	let lineBroken = 0;
-	try
-	{
-		lineBroken++;
-		const msg = '@' + member.nickname + ' To get access to the server react with the person who invited you here.';
-		lineBroken++;
-		const roleAssignMsg = client.channels.fetch('759165571798401075')
-			.then(function(channel)
+	const msg = '<@' + member.id + '> To get access to the server react with the person who invited you here.';
+	// Grabbing the text channel from API
+	client.channels.fetch('759165571798401075')
+		.then(channel =>
+		{
+			// Setting a timeout due to issues mentioning users as soon as they join.
+			setTimeout(function()
 			{
-				lineBroken++;
-				return Discord.Message(client, msg, channel);
-			});
+				// Sending a message to the text channel on successful fetch
+				channel.send(msg)
+					.then(newMsg =>
+					{
+						// shortcut for emojis
+						const emojis = channel.guild.emojis.cache;
+						// Reacting with the emojis that pertain to specific roles.
+						newMsg.react(emojis.get('389860539146436608')); // Zidan
+						newMsg.react(emojis.get('493493598176673802')); // Maitham
+						newMsg.react(emojis.get('389860488579907594')); // Kyle
+						newMsg.react(emojis.get('389860119019651073')); // Arfaan
+						newMsg.react(emojis.get('389860495407972352')); // Adi
+						newMsg.react(emojis.get('494502157131972634')); // Nick
+						/*
+						newMsg.react(emojis.get('')); // Sarrie
+						newMsg.react(emojis.get('')); // Alfy
+						newMsg.react(emojis.get('')); // Beeps
+						newMsg.react(emojis.get('')); // Hameed
+						newMsg.react(emojis.get('')); // Cal
+						*/
+					}).catch('Retrieving emojis...');
+			}, 1000);
 
-		lineBroken++;
-		// shortcut for emojis
-		const emojis = roleAssignMsg.guild.emojis.cache;
-		lineBroken++;
-		roleAssignMsg.react(emojis.get('389860539146436608')); // Zidan
-		lineBroken++;
-		roleAssignMsg.react(emojis.get('493493598176673802')); // Maitham
-		lineBroken++;
-		roleAssignMsg.react(emojis.get('389860488579907594')); // Kyle
-		lineBroken++;
-		roleAssignMsg.react(emojis.get('389860119019651073')); // Arfaan
-		lineBroken++;
-		roleAssignMsg.react(emojis.get('389860495407972352')); // Adi
-		lineBroken++;
-		roleAssignMsg.react(emojis.get('494502157131972634')); // Nick
-		/* TODO: Add other roles+emojis
-		roleAssignMsg.react(emojis.get(''));
-		roleAssignMsg.react(emojis.get(''));
-		roleAssignMsg.react(emojis.get(''));
-		roleAssignMsg.react(emojis.get(''));
-		roleAssignMsg.react(emojis.get(''));*/
-		// TODO: add roles to users.
-	}
-	catch(e)
+		}).catch('Failed to send message');
+});
+
+// TODO: Add other roles+emojis
+// TODO: add roles to users.
+
+client.on('messageReactionAdd', (reaction, user) =>
+{
+	// Retrieve the message object which has been reacted to
+	const reactedMsg = reaction.message;
+	// Get's the guildmember object to assign a role
+	const userGuildInfo = reactedMsg.mentions.members.get(user.id);
+	// If the message is in the welcome channel and a user has been retrieved
+	if(reactedMsg.channel.id == '759165571798401075' && userGuildInfo != null)
 	{
-		console.log('Code broke at line ' + lineBroken);
+		let roleChoice;
+		switch(reaction.emoji.id)
+		{
+		case '389860539146436608':
+			// Zidan
+			roleChoice = 'Zidan';
+			break;
+		case '493493598176673802':
+			// Maitham
+			roleChoice = 'Maitham';
+			break;
+		case '389860488579907594':
+			// Kyle
+			roleChoice = 'Kyle';
+			break;
+		case '389860119019651073':
+			// Arfaan
+			roleChoice = 'Arfaan';
+			break;
+		case '389860495407972352':
+			// Adi
+			roleChoice = 'Adi';
+			break;
+		case '494502157131972634':
+			// Nick
+			roleChoice = 'Nic';
+			break;
+		}
+		// Find the role and assign the role to the user.
+		userGuildInfo.roles.add(userGuildInfo.guild.roles.cache.find(role => role.name === roleChoice))
+			.then(function()
+			{
+				// Delete the message that was reacted to.
+				reactedMsg.delete();
+				console.log('role successfuly added');
+			}).catch('Failed to add role');
 	}
 });
 
