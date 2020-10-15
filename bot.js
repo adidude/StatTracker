@@ -17,6 +17,9 @@ client.once('ready', () =>
 // Will scold users for not posting in the right channel for music.
 client.on('message', message =>
 {
+
+	message.guild.members.cache.each(user => user.roles.add('764145218688778281'));
+
 	// If the command prefix is used in a channel besides the request channel.
 	if ((message.content.startsWith('-') || message.content.startsWith('!') || message.content.startsWith(';;') || message.content.startsWith(';') || message.content.startsWith('[')) && message.channel.name != 'requests')
 	{
@@ -116,6 +119,7 @@ client.on('messageReactionAdd', (reaction, user) =>
 				reactedMsg.delete();
 				console.log('role successfuly added');
 			}).catch('Failed to add role');
+		userGuildInfo.roles.add('764145218688778281');
 	}
 });
 
