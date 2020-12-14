@@ -55,13 +55,8 @@ client.on('guildMemberAdd', member =>
 						newMsg.react(emojis.get('389860119019651073')); // Arfaan
 						newMsg.react(emojis.get('389860495407972352')); // Adi
 						newMsg.react(emojis.get('494502157131972634')); // Nick
-						/*
-						newMsg.react(emojis.get('')); // Sarrie
-						newMsg.react(emojis.get('')); // Alfy
-						newMsg.react(emojis.get('')); // Beeps
-						newMsg.react(emojis.get('')); // Hameed
-						newMsg.react(emojis.get('')); // Cal
-						*/
+						//newMsg.react(emojis.get('')); // Sarrie
+						newMsg.react(emojis.get('787843490901393409')); // Alfy
 					}).catch('Retrieving emojis...');
 			}, 1000);
 
@@ -106,6 +101,10 @@ client.on('messageReactionAdd', (reaction, user) =>
 		case '494502157131972634':
 			// Nick
 			roleChoice = 'Nic';
+			break;
+		case '787843490901393409':
+			//Alfy
+			roleChoice = 'Alfy'
 			break;
 		}
 		// Find the role and assign the role to the user.
