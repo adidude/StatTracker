@@ -39,6 +39,7 @@ client.on('guildMemberAdd', member =>
 	client.channels.fetch('759165571798401075')
 		.then(channel =>
 		{
+			console.log("Channel found!");
 			// Setting a timeout due to issues mentioning users as soon as they join.
 			setTimeout(function()
 			{
@@ -46,6 +47,7 @@ client.on('guildMemberAdd', member =>
 				channel.send(msg)
 					.then(newMsg =>
 					{
+						console.log("Message sent!");
 						// shortcut for emojis
 						const emojis = channel.guild.emojis.cache;
 						// Reacting with the emojis that pertain to specific roles.
@@ -57,6 +59,7 @@ client.on('guildMemberAdd', member =>
 						newMsg.react(emojis.get('494502157131972634')); // Nick
 						newMsg.react(emojis.get('787945689409519616')); // Sarrie
 						newMsg.react(emojis.get('787843490901393409')); // Alfy
+						console.log("Emojis should be added at this point");
 					}).catch('Retrieving emojis...');
 			}, 1000);
 
