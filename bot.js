@@ -36,7 +36,7 @@ client.on('guildMemberAdd', member =>
 {
 	const msg = '<@' + member.id + '> To get access to the server react with the person who invited you here.';
 	// Grabbing the text channel from API
-	client.channels.fetch('759165571798401075')
+	client.channels.cache.find(chan => chan.id === '759165571798401075')
 		.then(channel =>
 		{
 			console.log("Channel found!");
