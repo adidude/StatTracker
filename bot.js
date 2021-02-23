@@ -1,35 +1,14 @@
 // Import discord.js API library and login token.
 const Discord = require('discord.js');
-const client = new Discord.Client({ partials: ['CHANNEL', 'MESSAGE', 'REACTION'] });
-
-const Music = require("./commands/music.js");
-//Added ytdl
-const ytdl = require("ytdl-core");
-
-// Counter Variables
-let pogcounter = 0;
-
-let text_channel=null;
-
-//Holds song Queue
-var servers={};
+// Imports the Google Cloud client library
+const Compute = require('@google-cloud/compute');
+const compute = new Compute();
+const zone = compute.zone('us-central1-a');
+const machine = zone.vm('valheim-server');
 
 
-
-const PREFIX='p';
-
-var version='1.0';
-
-const fs = require('fs');
-
-client.commands = new Discord.Collection();
-
-const commandFiles= fs.readdirSync('./commands/').filter(file=> file.endsWith('.js'));
-for (const file of commandFiles){
-	const command = require(`./commands/${file}`);
-
-	client.commands.set(command.name, command);
-}
+// Make client for API calls
+const client = new Discord.Client();
 
 // Inform us when connected to server.
 client.once('ready', () =>
@@ -37,44 +16,6 @@ client.once('ready', () =>
 	console.log('Connected!');
 });
 
-// const prefix = '[';
-
-//Music Queue system
-class Queue
-{
-	constructor()
-	{
-		this.elements = [];
-	}
-
-	// Adds a songName to the queue
-	enqueue(songName)
-	{
-		this.elements.push(songName);
-	}
-
-	dequeue()
-	{
-		return this.elements.length.shift();
-	}
-
-	isEmpty()
-	{
-		return this.elements.length == 0;
-	}
-
-	length()
-	{
-		return this.elements.length;
-	}
-
-	peek()
-	{
-		return !this.isEmpty() ? this.elements[0] : undefined;
-	}
-}
-
-// Will scold users for not posting in the right channel for music.
 client.on('message', message =>
 {
 	// If the command prefix is used in a channel besides the request channel.
@@ -82,154 +23,59 @@ client.on('message', message =>
 	{
 		// Deletes message
 		message.delete();
+		return;
 	}
-	// Counter
-	if(message.content.toLowerCase() == 'poggers' || message.content.toLowerCase() == 'pog' || message.content.toLowerCase() == 'pogchamp')
+	else if(message.content.startsWith('!'))
 	{
-		pogcounter++ ;
-		message.reply('Poggers: ' + pogcounter);
+		const switchState = message.content.substr(1, message.content.length); // Decides to switch server on or off.
+		switch(switchState)
+		{
+		case 'start':
+			machine.start((err, operation, apiResponse) => serverSwitch(err, operation, apiResponse, message, 1));
+			break;
+		case 'stop':
+			machine.stop((err, operation, apiResponse) => serverSwitch(err, operation, apiResponse, message, 0));
+			break;
+		}
 	}
-
-//Music Stuff
-text_channel=client.channels.fetch("389927870660870144"); //server id returns requests channel
-
-				//It just means we are ignoring the first letter. Then splitting by spaces
-				if (!message.content.startsWith(PREFIX)||message.author.bot) return;
-
-				const args= message.content.slice(PREFIX.length).split(/ +/);
-				const command= args.shift().toLowerCase();
-				if (command==='clear'){
-					client.commands.get('clear').execute(message, args);
-				} else if (command === 'play') {
-						client.commands.get('play').execute(message, args);
-				} else if (command === 'leave') {
-						client.commands.get('leave').execute(message, args);
-				}
-
-				switch(command){
-					case "skip": // skips current song and plays next if available
-                Music.skipMusic(text_channel);
-                break;
-					case "pause": // pauses current song
-			          Music.pauseMusic(text_channel);
-			          break;
-					case "resume": // resumes current song
-			          Music.resumeMusic(text_channel);
-			          break;
-					case "clear": // clears queue ADMIN only
-                if (isAdmin(message.member)) {
-                    Music.clearQueue(text_channel);
-                } else {
-                    text_channel.send("not admin" + message.author);
-                }
-                break;
-					case "remove": // removes a song from queue given a position
-	             	Music.removeMusic(args[0], text_channel);
-	              break;
-					case "print": // prints queue details
-	              Music.printQueue(queue_size, text_channel);
-	              break;
-					case "autoplay": // continues to play songs in queue, toggle on/off
-			          Music.setAutoplay(message, text_channel);
-			          break;
-					case "add": // adds a song to queue
-              	Music.addSearch(args, Data.config.yt_api_key, text_channel, queue_size);
-                break;
-				}
 });
-// // Display message to assign roles to new members
-// client.on('guildMemberAdd', member =>
-// {
-// 	const msg = '<@' + member.id + '> To get access to the server react with the person who invited you here.';
-// 	// Grabbing the text channel from API
-// 	client.channels.cache.find(chan => chan.id === '759165571798401075')
-// 		.then(channel =>
-// 		{
-// 			console.log("Channel found!");
-// 			// Setting a timeout due to issues mentioning users as soon as they join.
-// 			setTimeout(function()
-// 			{
-// 				// Sending a message to the text channel on successful fetch
-// 				channel.send(msg)
-// 					.then(newMsg =>
-// 					{
-// 						console.log("Message sent!");
-// 						// shortcut for emojis
-// 						const emojis = channel.guild.emojis.cache;
-// 						// Reacting with the emojis that pertain to specific roles.
-// 						newMsg.react(emojis.get('389860539146436608')); // Zidan
-// 						newMsg.react(emojis.get('493493598176673802')); // Maitham
-// 						newMsg.react(emojis.get('389860488579907594')); // Kyle
-// 						newMsg.react(emojis.get('389860119019651073')); // Arfaan
-// 						newMsg.react(emojis.get('389860495407972352')); // Adi
-// 						newMsg.react(emojis.get('494502157131972634')); // Nick
-// 						newMsg.react(emojis.get('787945689409519616')); // Sarrie
-// 						newMsg.react(emojis.get('787843490901393409')); // Alfy
-// 						console.log("Emojis should be added at this point");
-// 					}).catch('Retrieving emojis...');
-// 			}, 1000);
-//
-// 		}).catch('Failed to send message');
-// });
-//
-// // TODO: Add other roles+emojis
-// // TODO: add roles to users.
-//
-// client.on('messageReactionAdd', (reaction, user) =>
-// {
-// 	// Retrieve the message object which has been reacted to
-// 	const reactedMsg = reaction.message;
-// 	// Get's the guildmember object to assign a role
-// 	const userGuildInfo = reactedMsg.mentions.members.get(user.id);
-// 	// If the message is in the welcome channel and a user has been retrieved
-// 	if(reactedMsg.channel.id == '759165571798401075' && userGuildInfo != null)
-// 	{
-// 		let roleChoice;
-// 		switch(reaction.emoji.id)
-// 		{
-// 		case '389860539146436608':
-// 			// Zidan
-// 			roleChoice = 'Zidan';
-// 			break;
-// 		case '493493598176673802':
-// 			// Maitham
-// 			roleChoice = 'Maitham';
-// 			break;
-// 		case '389860488579907594':
-// 			// Kyle
-// 			roleChoice = 'Kyle';
-// 			break;
-// 		case '389860119019651073':
-// 			// Arfaan
-// 			roleChoice = 'Arfaan';
-// 			break;
-// 		case '389860495407972352':
-// 			// Adi
-// 			roleChoice = 'Adi';
-// 			break;
-// 		case '494502157131972634':
-// 			// Nick
-// 			roleChoice = 'Nic';
-// 			break;
-// 		case '787843490901393409':
-// 			//Alfy
-// 			roleChoice = 'Alfy';
-// 			break;
-// 		case '787945689409519616':
-// 			roleChoice = 'Sarrie';
-// 			break;
-// 		}
-// 		// Find the role and assign the role to the user.
-// 		userGuildInfo.roles.add(userGuildInfo.guild.roles.cache.find(role => role.name === roleChoice))
-// 			.then(function()
-// 			{
-// 				// Delete the message that was reacted to.
-// 				reactedMsg.delete();
-// 				console.log('role successfuly added');
-// 			}).catch('Failed to add role');
-// 		userGuildInfo.roles.add('764145218688778281');
-// 	}
-// });
+
+function serverSwitch(err, operation, apiResponse, msg, state)
+{
+	// TODO: Poll server for status
+	if(err != null)
+	{
+		if(state == 1)
+		{
+			console.log('Error Occured While Starting: ' + err);
+			msg.reply('We having an issue getting this thing into gear.');
+		}
+		else
+		{
+			console.log('Error Occured While Stopping: ' + err);
+			msg.reply('We having an issue getting this thing into gear.');
+		}
+	}
+	else if(state == 1) // Inform user that the server has started
+	{
+		msg.reply('The Valheim server has started.');
+	}
+	else
+	{
+		msg.reply('The Valheim server has stoped.');
+	}
+}
+
+// TODO: implement better async sleep
+function sleep(milliseconds)
+{
+	const date = Date.now();
+	let currentDate = null;
+	do
+	{
+		currentDate = Date.now();
+	} while (currentDate - date < milliseconds);
+}
 
 // TODO: Figure out what needs to be done on closing/crash event, and if this is enough.
 client.on('disconnect', CloseEvent =>
@@ -287,5 +133,4 @@ client.on('disconnect', CloseEvent =>
 	}
 });
 
-//client.login(process.env.token);
-client.login(token);
+client.login(process.env.token);
