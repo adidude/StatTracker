@@ -5,7 +5,7 @@
   "main": "bot.js",
   "directories": { "test": "test" },
   "scripts": {
-    "test": "mocha || true"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
