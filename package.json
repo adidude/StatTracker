@@ -3,7 +3,9 @@
   "version": "2.0.1",
   "description": "Discord bot for private discord server",
   "main": "bot.js",
-  "directories": { "test": "test" },
+  "directories": {
+    "test": "test"
+  },
   "scripts": {
     "test": "mocha"
   },
