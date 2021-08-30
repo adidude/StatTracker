@@ -1,6 +1,6 @@
 module.exports = {
     name: 'skip',
-    aliases: ['sk'],
+    aliases: ['s'],
     category: 'Music',
     utilisation: '{prefix}skip',
 

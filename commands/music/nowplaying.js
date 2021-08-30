@@ -20,7 +20,7 @@ module.exports = {
             embed: {
                 color: 'RED',
                 author: { name: track.title },
-                footer: { text: 'I am Mr.T' },
+                footer: { text: 'Mr.T' },
                 fields: [
                     { name: 'Channel', value: track.author, inline: true },
                     { name: 'Requested by', value: track.requestedBy.username, inline: true },

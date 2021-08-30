@@ -1,3 +1,13 @@
 module.exports = (client, message, queue) => {
-    message.channel.send(`${client.emotes.error} - Music stopped as there is no more member in the voice channel !`);
+    setTimeout(function(){
+        message.channel.send({
+            embed: {
+                color: 'PURPLE',
+                author: {name: "This shit boring."},
+                fields: [
+                    {name:"Bye!", value: client.emotes.maitham_facepalm},
+                        ]
+                    },
+        }).then(msg=>{msg.delete({timeout:30000})});
+    },110000);
 };

@@ -2,7 +2,6 @@ const fs = require('fs');
 const discord = require('discord.js');
 const client = new discord.Client({ disableMentions: 'everyone' });
 const { Player } = require('discord-player');
-
 // Inform us when connected to server.
 client.once('ready', () =>
 {
@@ -27,7 +26,11 @@ client.on('message', message =>
 
 //Music Stuff
 //======================================================================================================================
-client.player = new Player(client);
+client.player = new Player(client,
+	{
+		leaveOnEndCooldown:120000,						//Bot Stays in Channel for 2 mins then leaves if there is no activity
+		leaveOnEmptyCooldown:120000,						//cooldown is in milliseconds
+	});
 client.config = require('./config/bot');
 client.emotes = client.config.emojis;
 client.filters = client.config.filters;
