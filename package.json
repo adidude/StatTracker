@@ -2,6 +2,10 @@
   "name": "mrtdiscordbot",
   "version": "2.0.0",
   "description": "Discord bot for private discord server",
+  "engines": {
+    "node": "16.x",
+    "npm": "7.x"
+  },
   "main": "bot.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

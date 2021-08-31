@@ -15,7 +15,7 @@
 		},
 
 		discord: {
-			token: 'token',
+			token: process.env.token,
 			prefix: '.',
 			activity: 'Music you Fool!',
 		},
