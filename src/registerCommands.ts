@@ -1,11 +1,11 @@
 // Only needs to be run once to register new commands.
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { Client, Intents } from 'discord.js';
-import { guildID, token } from '../config/config.json';
+import { guildID, token } from './config/config.json';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 
-// All commands can be added here
+// All commands can be added here. This is here to store an array of commands to register
 const actions = [
 	new SlashCommandBuilder().setName('test').setDescription('Tests absolutly nothing'),
 	new SlashCommandBuilder().setName('test1').setDescription('Tests another command'),

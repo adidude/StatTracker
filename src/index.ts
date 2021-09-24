@@ -1,21 +1,21 @@
-import { Client, Intents } from 'discord.js';
-const key = require('../config/bot.js');
+import { Client, Intents, Interaction } from 'discord.js';
+import { token } from './config/config.json';
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+console.log('Connecting...');
+
+const client = new Client({ intents: [Intents.FLAGS.GUILD_INTEGRATIONS] });
 
 client.on('ready', () =>
 {
-	console.log('Logged in as bokemon!');
+	console.log('Connected!');
 });
 
-client.on('message', (msg) =>
+client.on('interactionCreate', (interact: Interaction) =>
 {
-	console.log('message detected');
-	if (msg.author.bot)
+	if (interact.isCommand())
 	{
-		return;
+		interact.reply('hola');
 	}
-	msg.reply('wasssup');
 });
 
-client.login(key.token);
+client.login(token);
