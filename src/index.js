@@ -28,7 +28,7 @@ client.on('interactionCreate', async (interact) =>
 });
 
 // async function play(interact: Interaction)
-async function play(interact: Interaction)
+async function play(interact)
 {
 	const voiceChannelID = interact.member?.voice?.channelId;
 	if (voiceChannelID == null && client.uptime < 1800000)
