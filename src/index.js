@@ -1,5 +1,5 @@
 const { Client, Intents, Interaction } = require('discord.js');
-const { token } = require('./config/config.json');
+//const { token } = require('./config/config.json');
 const { Player } = require('discord-player');
 const { userMention } = require('@discordjs/builders');
 
@@ -78,4 +78,5 @@ async function play(interact)
 	return await interact.followUp({ content: `⏱️ | Loading track **${track.title}**!` });
 }
 
-client.login(token);
+//client.login(token);
+client.login(process.env.token);
