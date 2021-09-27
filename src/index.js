@@ -1,7 +1,7 @@
-import { Client, Intents, Interaction } from 'discord.js';
-import { token } from './config/config.json';
-import { Player } from 'discord-player';
-import { userMention } from '@discordjs/builders';
+const { Client, Intents, Interaction } = require('discord.js');
+const { token } = require('./config/config.json');
+const { Player } = require('discord-player');
+const { userMention } = require('@discordjs/builders');
 
 console.log('Connecting...');
 
