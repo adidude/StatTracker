@@ -7,8 +7,7 @@ import { Routes } from 'discord-api-types/v9';
 
 // All commands can be added here. This is here to store an array of commands to register
 const actions = [
-	new SlashCommandBuilder().setName('test').setDescription('Tests absolutly nothing'),
-	new SlashCommandBuilder().setName('test1').setDescription('Tests another command'),
+	new SlashCommandBuilder().setName('play').setDescription('Plays a song you search for or the link').addStringOption((option) => option.setName('query').setDescription('The song to be requested').setRequired(true)),
 ].map(command => command.toJSON());
 
 const client = new Client({ intents: [ Intents.FLAGS.GUILDS ] });
