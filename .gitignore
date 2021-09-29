@@ -1,2 +1,4 @@
 node_modules
-.eslintrc.json
+build
+config
+.vscode
