@@ -1,8 +1,8 @@
 import { Client, CommandInteraction, Guild, GuildMember, Intents, Interaction, VoiceChannel } from 'discord.js';
-import { token } from './config/config.json';
 import { Player } from 'discord-player';
 import { userMention } from '@discordjs/builders';
 import { Snowflake } from 'discord-api-types';
+import fs from 'fs';
 
 console.log('Connecting...');
 
@@ -96,4 +96,23 @@ async function play(interact: CommandInteraction)
 	return await interact.followUp({ content: `⏱️ | Loading track **${track.title}**!` });
 }
 
-client.login(token);
+const path = __dirname + '\\config';
+
+if (fs.existsSync(path))
+{
+	let token;
+	fs.readFile(path + '\\config.json', 'utf8', (err, data) =>
+	{
+		if (err)
+		{
+			console.error(err);
+			return;
+		}
+		token = JSON.parse(data).token;
+		client.login(token);
+	});
+}
+else
+{
+	client.login(process.env.token);
+}
