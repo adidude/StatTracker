@@ -27,7 +27,7 @@ if (fs.existsSync(path))
 else
 {
 	token = process.env.token;
-	guildID = secrets.GUILDID;
+	guildID = process.env.GUILDID;
 }
 
 // All commands can be added here. This is here to store an array of commands to register
