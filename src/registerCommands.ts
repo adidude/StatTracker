@@ -1,9 +1,34 @@
 // Only needs to be run once to register new commands.
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { Client, Intents } from 'discord.js';
-import { guildID, token } from './config/config.json';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
+import fs from 'fs';
+
+const path = __dirname + '\\config';
+
+let token;
+let guildID;
+if (fs.existsSync(path))
+{
+
+	fs.readFile(path + '\\config.json', 'utf8', (err, data) =>
+	{
+		if (err)
+		{
+			console.error(err);
+			return;
+		}
+		const json = JSON.parse(data);
+		token = json.token;
+		guildID = json.guildID;
+	});
+}
+else
+{
+	token = process.env.token;
+	guildID = secrets.GUILDID;
+}
 
 // All commands can be added here. This is here to store an array of commands to register
 const actions = [
