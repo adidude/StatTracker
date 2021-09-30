@@ -11,7 +11,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node ./src/index.ts",
     "dev": "nodemon",
-    "cmd": "ts-node ./src/registerCommands.ts"
+    "cmd": "ts-node ./src/registerCommands.ts",
+    "postinstall": "tsc"
   },
   "repository": {
     "type": "git",
