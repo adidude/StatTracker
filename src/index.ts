@@ -1,4 +1,4 @@
-import { Client, CommandInteraction, Guild, GuildMember, Intents, Interaction, VoiceChannel } from 'discord.js';
+import { Client, CommandInteraction, GuildMember, Guild, Intents, Interaction, VoiceChannel } from 'discord.js';
 import { Player } from 'discord-player';
 import { userMention } from '@discordjs/builders';
 import { Snowflake } from 'discord-api-types';
@@ -12,7 +12,10 @@ const player = new Player(client);
 player.on('trackStart', (queue, track) =>
 {
 	const data: any = queue.metadata;
-	data.channel.send(`🎶 | Now playing **${track.title}**!`);
+	if (data.channel != null)
+	{
+		data.channel.send(`🎶 | Now playing **${track.title}**!`);
+	}
 });
 
 client.on('ready', () =>
@@ -22,36 +25,58 @@ client.on('ready', () =>
 
 client.on('interactionCreate', async (interact : Interaction) =>
 {
-	if (interact.isCommand())
+	const chatChan = await interact.channelId;
+	const isCmd : boolean = interact.isCommand();
+	if (!chatChan)
 	{
-		switch (interact.commandName)
+		console.log('Channel does not exist');
+		return;
+	}
+	else if (isCmd)
+	{
+		const interactCmd = interact as CommandInteraction;
+		if (isCmd && (chatChan == '389927870660870144' || chatChan == '867917110188343349'))
 		{
-		case 'play':
-			play(interact);
+			switch (interactCmd.commandName)
+			{
+			case 'play':
+				await play(interactCmd);
+				break;
+			}
 		}
 	}
+	else
+	{
+		console.log('Command does not exist');
+	}
+
+
 });
 
 // async function play(interact: Interaction)
 async function play(interact: CommandInteraction)
 {
-	const requestee : GuildMember = interact.member as GuildMember;
-	let voiceChannelID : Snowflake;
-
-	if (requestee != null && typeof requestee.voice.channelId == 'string')
+	const requestee = await interact.member;
+	if (!requestee)
 	{
-		voiceChannelID = requestee.voice.channelId;
+		return await interact.reply(userMention(interact.user.id) + ' was unable to retrieve data');
+	}
+
+	let voiceChannelID;
+	if (requestee instanceof GuildMember)
+	{
+		voiceChannelID = await requestee.voice.channelId;
 	}
 	else
 	{
-		return await interact.channel?.send(userMention(interact.user.id) + ' cannot get your voice channel, either join a channel or mute/unmute.');
+		console.log('Object returned from below line is APIGuildMember: \nconst requestee = await interact.member;');
 	}
 
 	if (interact.guild?.me != null && interact.guild.me.voice != null)
 	{
 		if (interact.guild.me.voice.channelId && voiceChannelID !== interact.guild.me.voice.channelId)
 		{
-			return await interact.channel?.send('You are not in my voice channel!');
+			return await interact.reply('You are not in my voice channel!');
 		}
 	}
 
@@ -63,7 +88,12 @@ async function play(interact: CommandInteraction)
 	}
 	else
 	{
-		return await interact.channel?.send(userMention(interact.user.id) + ', I was unable to find that song');
+		return await interact.reply(userMention(interact.user.id) + ', I was unable to find that song');
+	}
+
+	if (!voiceChannelID)
+	{
+		return await interact.reply(userMention(interact.user.id) + 'I just got here man, you need to mute/unmute so I can figure out where you are');
 	}
 
 	const guild = interact.guild as Guild;
