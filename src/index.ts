@@ -9,35 +9,31 @@ const client : Client = new Client({ intents: [Intents.FLAGS.GUILD_INTEGRATIONS,
 
 const musicHandler : MusicPlayer = new MusicPlayer(client);
 
-client.on('ready', () =>
-{
+client.on('ready', () => {
 	console.log('Connected!');
 });
 
-client.on('interactionCreate', async (interact : Interaction) =>
-{
+client.on('interactionCreate', async (interact : Interaction) => {
 	const chatChan = await interact.channelId;
 	const isCmd : boolean = interact.isCommand();
-	if (!chatChan)
-	{
+	if (!chatChan) {
 		console.log('Channel does not exist');
 		return;
 	}
-	else if (isCmd)
-	{
+	else if (isCmd) {
 		const interactCmd = interact as CommandInteraction;
-		if (isCmd && (chatChan == '389927870660870144' || chatChan == '867917110188343349'))
-		{
-			switch (interactCmd.commandName)
-			{
+		if (isCmd && (chatChan == '389927870660870144' || chatChan == '867917110188343349')) {
+			switch (interactCmd.commandName) {
 			case 'play':
 				await musicHandler.play(interactCmd);
+				break;
+			case 'skip':
+				musicHandler.skip(interactCmd);
 				break;
 			}
 		}
 	}
-	else
-	{
+	else {
 		console.log('Command does not exist');
 	}
 
@@ -46,13 +42,10 @@ client.on('interactionCreate', async (interact : Interaction) =>
 
 const path = __dirname + '\\config';
 
-if (fs.existsSync(path))
-{
+if (fs.existsSync(path)) {
 	let token;
-	fs.readFile(path + '\\config.json', 'utf8', (err, data) =>
-	{
-		if (err)
-		{
+	fs.readFile(path + '\\config.json', 'utf8', (err, data) => {
+		if (err) {
 			console.error(err);
 			return;
 		}
@@ -60,7 +53,6 @@ if (fs.existsSync(path))
 		client.login(token);
 	});
 }
-else
-{
+else {
 	client.login(process.env.token);
 }

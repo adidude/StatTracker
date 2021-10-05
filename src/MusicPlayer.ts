@@ -1,102 +1,124 @@
 import { GuildMember, Guild, VoiceChannel, Client, CommandInteraction, Message } from 'discord.js';
 import { userMention } from '@discordjs/builders';
-import { Player, Queue } from 'discord-player';
+import { Player, Track, Queue } from 'discord-player';
 import { APIMessage } from 'discord-api-types';
+import { TestResponse } from './TestResponse';
 // TODO: Need to use the proper file for
-// import { guildID } from './config/config.json';
+import { guildID } from './config/config.json';
 
-export class MusicPlayer
-{
+export class MusicPlayer {
 	player: Player
-	// que :Queue;
-	constructor(client: Client)
-	{
+	constructor(client: Client) {
 		this.player = new Player(client);
-		// this.que = new Queue(this.player, client.guilds.cache.first() as Guild);
 		this.informPlayingTrack();
 	}
 
-	informPlayingTrack() : void
-	{
-		this.player.on('trackStart', (queue, track) =>
-		{
-			const data: any = queue.metadata;
-			if (data.channel != null)
-			{
+	informPlayingTrack() : void {
+		this.player.on('trackStart', (queue : Queue, track : Track) => {
+			console.log('trackStart player event triggered');
+			const data :any = queue.metadata;
+			if (data.channel != null) {
 				data.channel.send(`🎶 | Now playing **${track.title}**!`);
 			}
 		});
 	}
 
-	async play(interact: CommandInteraction) : Promise<Message|APIMessage|void>
-	{
-		const requestee = await interact.member;
-		if (!requestee)
-		{
-			return await interact.reply(userMention(interact.user.id) + ' was unable to retrieve data');
+	/**
+	 * Retrieves the guild member that called the command
+	 * @param interact The CommandInteraction from discord.js
+	 * @returns TestResponse which confirms if the data could get retrieved
+	 */
+	async getInteractionMember(interact : CommandInteraction) : Promise<TestResponse> {
+		try {
+			const requestee = await interact.member as GuildMember;
+			if (!requestee) {
+				console.log('ERR: Failed to retrieve GuildMember in getInteractionMember()');
+				console.log('Interaction:');
+				console.log(interact);
+				await interact.reply('I was unable to find out who you are to figure out where you are.');
+				// FAIL
+				const res : TestResponse = {
+					testPassed: false,
+					resObj: null,
+				};
+				return res;
+			}
+			else {
+				// PASS
+				const res : TestResponse = {
+					testPassed: true,
+					resObj: requestee,
+				};
+
+				return res;
+			}
+		}
+		catch (err) {
+			console.log('ERR: Could not properly type cast to GuildMember in getInteractionMember()');
+			console.log(err);
+			await interact.reply('Tell some idiot to check my logs, coz I don\'t know how to turn water into wine!');
+			// FAIL
+			const res : TestResponse = {
+				testPassed: false,
+				resObj: null,
+			};
+			return res;
+		}
+	}
+
+
+	async play(interact: CommandInteraction) : Promise<Message|APIMessage|void> {
+		// Retrieving the GuildMember to find the voice channel to connect to as well as who to reply to.
+		const memberStore = await this.getInteractionMember(interact);
+		let requestee : GuildMember;
+		if (memberStore.testPassed) {
+			requestee = memberStore.resObj;
+		}
+		else {
+			return;
 		}
 
-		let voiceChannelID;
-		if (requestee instanceof GuildMember)
-		{
-			voiceChannelID = await requestee.voice.channelId;
-		}
-		else
-		{
-			console.log(
-				'Object returned from below line is APIGuildMember: \nconst requestee = await interact.member;',
-			);
+		// Retrieving voice channel ID to join channel
+		const voiceChannelID = await requestee.voice.channelId;
+		if (!voiceChannelID) {
+			console.log('WARN: Failed to retrieve user\'s voice channel for user: ' + requestee.displayName);
+			return await interact.reply(userMention(requestee.id) + ', I just got here man, you need to mute/unmute so I can figure out where you are');
 		}
 
-		if (interact.guild?.me != null && interact.guild.me.voice != null)
-		{
-			if (
-				interact.guild.me.voice.channelId &&
-				voiceChannelID !== interact.guild.me.voice.channelId
-			)
-			{
-				return await interact.reply('You are not in my voice channel!');
+		// Getting the bot's GuildMember object to check if bot and user are in the same voice channel
+		const botConnection = interact.guild?.me;
+		if (botConnection != null && botConnection.voice != null) {
+			const botVoiceID = botConnection.voice.channelId;
+			if (voiceChannelID !== botVoiceID) {
+				console.log('WARN: Apparently user is not in same voice channel as bot');
+				console.log('botVoiceID: ' + botVoiceID + '\nbotConnection: ' + botConnection);
+				return await interact.reply(userMention(requestee.id) + ' you are not in my voice channel!');
 			}
 		}
 
+		// Getting the song name that the user searched for
 		const queryHolder = interact.options.get('query');
 		let query: string;
-		if (queryHolder != null)
-		{
+		if (queryHolder != null) {
 			query = queryHolder.value as string;
 		}
-		else
-		{
-			return await interact.reply(
-				userMention(interact.user.id) + ', I was unable to find that song',
-			);
+		else {
+			console.log('ERR: Could not retrieve song name from interactions\'s query field');
+			return await interact.reply(userMention(requestee.id) + ', I was unable to find that song');
 		}
 
-		if (!voiceChannelID)
-		{
-			return await interact.reply(
-				userMention(interact.user.id) +
-				'I just got here man, you need to mute/unmute so I can figure out where you are',
-			);
-		}
 
 		const guild = interact.guild as Guild;
-		const queue = this.player.createQueue(guild, {
-			metadata: {
-				channel: interact.channel,
-			},
-		});
+		const queue = this.player.createQueue(guild, { metadata: { channel: interact.channel } });
 
 		// verify vc connection
-		try
-		{
+		try {
 			const voiceChannel = (await interact.guild?.channels.fetch(
 				voiceChannelID,
 			)) as VoiceChannel;
 			if (!queue.connection) await queue.connect(voiceChannel);
 		}
-		catch
-		{
+		catch {
 			queue.destroy();
 			return await interact.reply({
 				content: 'Could not join your voice channel!',
@@ -110,8 +132,7 @@ export class MusicPlayer
 				requestedBy: interact.user,
 			})
 			.then((x) => x.tracks[0]);
-		if (!track)
-		{
+		if (!track) {
 			await interact.followUp({
 				content: `❌ | Track **${query}** not found!`,
 			});
@@ -124,5 +145,18 @@ export class MusicPlayer
 			content: `⏱️ | Loading track **${track.title}**!`,
 		});
 		return;
+	}
+
+	skip(interact : CommandInteraction) : boolean {
+		const que : Queue = this.player.getQueue(guildID);
+		const songName = que.current.title;
+		if (que.skip()) {
+			interact.reply('Successfully skipped ' + songName);
+			return true;
+		}
+		else {
+			interact.reply('Failed to skip song');
+			return false;
+		}
 	}
 }
