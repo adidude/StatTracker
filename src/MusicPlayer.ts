@@ -4,12 +4,14 @@ import { Player, Track, Queue } from 'discord-player';
 import { APIMessage } from 'discord-api-types';
 import { TestResponse } from './TestResponse';
 // TODO: Need to use the proper file for
-import { guildID } from './config/config.json';
+// import { guildID } from './config/config.json';
 
 export class MusicPlayer {
 	player: Player
+	guild: Guild
 	constructor(client: Client) {
 		this.player = new Player(client);
+		this.guild = client.guilds.cache.first() as Guild;
 		this.informPlayingTrack();
 	}
 
@@ -147,8 +149,13 @@ export class MusicPlayer {
 		return;
 	}
 
+	/**
+	 * Skips the currently playing song and will fail if nothing is currently playing.
+	 * @param interact The CommandInteraction that was sent by the user
+	 * @returns bool value for success or fail.
+	 */
 	skip(interact : CommandInteraction) : boolean {
-		const que : Queue = this.player.getQueue(guildID);
+		const que : Queue = this.player.getQueue(this.guild);
 		const songName = que.current.title;
 		if (que.skip()) {
 			interact.reply('Successfully skipped ' + songName);
