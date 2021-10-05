@@ -90,6 +90,8 @@ export class MusicPlayer {
 		if (botConnection != null && botConnection.voice != null) {
 			const botVoiceID = botConnection.voice.channelId;
 			if (voiceChannelID !== botVoiceID) {
+				console.log('WARN: Apparently user is not in same voice channel as bot');
+				console.log('botVoiceID: ' + botVoiceID + '\nbotConnection: ' + botConnection);
 				return await interact.reply(userMention(requestee.id) + ' you are not in my voice channel!');
 			}
 		}
@@ -143,5 +145,18 @@ export class MusicPlayer {
 			content: `⏱️ | Loading track **${track.title}**!`,
 		});
 		return;
+	}
+
+	skip(interact : CommandInteraction) : boolean {
+		const que : Queue = this.player.getQueue(guildID);
+		const songName = que.current.title;
+		if (que.skip()) {
+			interact.reply('Successfully skipped ' + songName);
+			return true;
+		}
+		else {
+			interact.reply('Failed to skip song');
+			return false;
+		}
 	}
 }
