@@ -154,9 +154,9 @@ export class MusicPlayer {
 	 * @param interact The CommandInteraction that was sent by the user
 	 * @returns bool value for success or fail.
 	 */
-	skip(interact : CommandInteraction) : boolean {
-		const que : Queue = this.player.getQueue(this.guild);
-		const songName = que.current.title;
+	async skip(interact : CommandInteraction) : Promise<boolean> {
+		const que : Queue = await this.player.getQueue(this.guild);
+		const songName = await que.current.title;
 		if (que.skip()) {
 			interact.reply('Successfully skipped ' + songName);
 			return true;

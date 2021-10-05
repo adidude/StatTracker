@@ -28,7 +28,7 @@ client.on('interactionCreate', async (interact : Interaction) => {
 				await musicHandler.play(interactCmd);
 				break;
 			case 'skip':
-				musicHandler.skip(interactCmd);
+				await musicHandler.skip(interactCmd);
 				break;
 			}
 		}
