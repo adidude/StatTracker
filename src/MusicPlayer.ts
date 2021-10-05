@@ -8,16 +8,13 @@ import { TestResponse } from './TestResponse';
 
 export class MusicPlayer {
 	player: Player
-	guild: Guild
 	constructor(client: Client) {
 		this.player = new Player(client);
-		this.guild = client.guilds.cache.first() as Guild;
 		this.informPlayingTrack();
 	}
 
 	informPlayingTrack() : void {
 		this.player.on('trackStart', (queue : Queue, track : Track) => {
-			console.log('trackStart player event triggered');
 			const data :any = queue.metadata;
 			if (data.channel != null) {
 				data.channel.send(`🎶 | Now playing **${track.title}**!`);
@@ -155,7 +152,8 @@ export class MusicPlayer {
 	 * @returns bool value for success or fail.
 	 */
 	async skip(interact : CommandInteraction) : Promise<boolean> {
-		const que : Queue = await this.player.getQueue(this.guild);
+		const playerGuild = interact.guild as Guild;
+		const que : Queue = await this.player.getQueue(playerGuild);
 		const songName = await que.current.title;
 		if (que.skip()) {
 			interact.reply('Successfully skipped ' + songName);
