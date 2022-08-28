@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/adidude/MrTtheDiscordBot#readme",
   "dependencies": {
-    "@discordjs/opus": "^0.6.0",
+    "@discordjs/opus": "^0.8.0",
     "discord-player": "^5.1.0",
     "discord.js": "^14.3.0",
     "ffmpeg-static": "^4.4.0"
