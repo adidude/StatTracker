@@ -31,7 +31,7 @@
     "ffmpeg-static": "^4.4.0"
   },
   "devDependencies": {
-    "@discordjs/rest": "^0.1.0-canary.0",
+    "@discordjs/rest": "^1.4.0",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
     "discord-api-types": "^0.37.5",
